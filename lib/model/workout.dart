@@ -19,8 +19,13 @@ class Workout {
 
   Workout.withId(this._id, this._title);
 
+  int get id => _id;
   String get title => _title;
   List<Exercise> get exercises => _exercises;
+
+  set id(int newId) {
+    _id = newId;
+  }
 
   set title(String newTitle) {
     _title = newTitle;
@@ -36,6 +41,7 @@ class Workout {
     if (_id != null) {
       map["workoutId"] = _id;
     }
+    return map;
   }
 
   Workout.fromObject(dynamic o) {

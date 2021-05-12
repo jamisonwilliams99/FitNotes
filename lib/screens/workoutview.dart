@@ -5,35 +5,85 @@ This screen will display all of the exercies in a workout
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
+import 'package:workout_tracking_app/model/workout.dart';
 import 'package:workout_tracking_app/screens/addexercise.dart';
 import 'package:workout_tracking_app/util/dbhelper.dart';
 
 class WorkoutView extends StatefulWidget {
+  Workout workout;
+  WorkoutView(this.workout);
+
   @override
-  _WorkoutViewState createState() => _WorkoutViewState();
+  _WorkoutViewState createState() => _WorkoutViewState(workout);
 }
 
 class _WorkoutViewState extends State<WorkoutView> {
+  Workout workout;
   DbHelper helper = DbHelper();
   List<Exercise> exercises;
   int count = 0;
 
+  _WorkoutViewState(this.workout);
+
+  TextEditingController titleController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    titleController.text = workout.title;
+
     if (exercises == null) {
       exercises = <Exercise>[];
       getData();
     }
 
-    return Scaffold(
-      body: workoutItems(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          navigateToDetail(Exercise("", 0, 0));
-        },
-        tooltip: "Add new exercise",
-        child: Icon(Icons.add),
+    return WillPopScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(workout.title),
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: GestureDetector(
+                  onTap: () {
+                    delete();
+                  },
+                  child: Icon(Icons.delete)),
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(40, 30, 40, 10),
+                child: TextField(
+                  controller: titleController,
+                  onChanged: (value) {
+                    updateTitle();
+                  },
+                  decoration: InputDecoration(
+                      labelText: "Workout Title",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                              5.0))), // need to define the titleUpdate function
+                ),
+              ),
+            ),
+            Expanded(child: workoutItems()),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            navigateToAddExercise(Exercise.withWorkoutId(workout.id, "", 0, 0));
+          },
+          tooltip: "Add new exercise",
+          label: Text("Add New Exercise"),
+          icon: Icon(Icons.add),
+        ),
       ),
+      onWillPop: () {
+        save();
+      },
     );
   }
 
@@ -66,7 +116,7 @@ class _WorkoutViewState extends State<WorkoutView> {
                     style: textStyle),
               ),
               onTap: () {
-                navigateToDetail(currentExercise);
+                navigateToAddExercise(currentExercise);
               },
             ),
           ),
@@ -75,16 +125,43 @@ class _WorkoutViewState extends State<WorkoutView> {
     );
   }
 
+  void save() {
+    helper.updateWorkout(workout);
+    Navigator.pop(context, true);
+  }
+
+  void updateTitle() {
+    workout.title = titleController.text;
+    helper.updateWorkout(workout);
+  }
+
+  void delete() async {
+    int result;
+    int deletedExercises;
+    Navigator.pop(context, true);
+    if (workout.id == null) {
+      return;
+    }
+    result = await helper.deleteWorkout(workout.id);
+    deletedExercises = await helper.deleteWorkoutExercises(workout.id);
+    if (result != 0) {
+      AlertDialog alertDialog = AlertDialog(content: Text("Workout deleted"));
+      showDialog(context: context, builder: (_) => alertDialog);
+    }
+  }
+
   void getData() {
     final dbFuture = helper.initializeDb();
 
     dbFuture.then((result) {
-      final exercisesFuture = helper.getExercises();
+      final exercisesFuture =
+          helper.getExercises(workout.id); // need to pass workoutId here
       exercisesFuture.then((result) {
         List<Exercise> exerciseList = <Exercise>[];
         count = result.length;
         for (int i = 0; i < count; i++) {
-          exerciseList.add(Exercise.fromObject(result[i]));
+          Exercise currentExercise = Exercise.fromObject(result[i]);
+          exerciseList.add(currentExercise);
         }
         setState(() {
           count = count;
@@ -94,7 +171,7 @@ class _WorkoutViewState extends State<WorkoutView> {
     });
   }
 
-  void navigateToDetail(Exercise exercise) async {
+  void navigateToAddExercise(Exercise exercise) async {
     bool result = await Navigator.push(context,
         MaterialPageRoute(builder: (context) => AddExercise(exercise)));
     if (result == true) {

@@ -141,10 +141,12 @@ class _AddExerciseState extends State<AddExercise> {
   }
 
   void updateReps() {
-    exercise.reps = int.parse(repsController.text);
+    exercise.reps =
+        repsController.text == "" ? 0 : int.parse(repsController.text);
   }
 
   void updateSets() {
-    exercise.sets = int.parse(setsController.text);
+    exercise.sets =
+        setsController.text == "" ? 0 : int.parse(setsController.text);
   }
 }

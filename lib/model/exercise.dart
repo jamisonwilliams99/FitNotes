@@ -10,6 +10,8 @@ class Exercise {
   Exercise.withId(this._id, this._name, this._reps,
       this._sets); // still need to add workoutId to this
 
+  Exercise.withWorkoutId(this._workoutId, this._name, this._reps, this._sets);
+
   // getters
   int get id => _id;
   int get workoutId => _workoutId;
@@ -39,12 +41,10 @@ class Exercise {
     map["name"] = _name;
     map["reps"] = _reps;
     map["sets"] = _sets;
+    map["workoutId"] = _workoutId;
 
     if (_id != null) {
       map["id"] = _id;
-    }
-    if (_workoutId != null) {
-      map["workoutId"] = _workoutId;
     }
     return map;
   }

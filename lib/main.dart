@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workout_tracking_app/screens/workoutview.dart';
+import 'package:workout_tracking_app/screens/workoutlist.dart';
 
 void main() {
   runApp(MyApp());
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'FitNotes',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.indigo),
       home: HomePage(),
@@ -30,9 +31,9 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("PR Tracker"),
+        title: Text("FitNotes"),
       ),
-      body: WorkoutView(),
+      body: WorkoutList(),
     );
   }
 }
