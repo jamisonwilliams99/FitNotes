@@ -31,6 +31,10 @@ class Workout {
     _title = newTitle;
   }
 
+  set exercises(List newExercises) {
+    _exercises = newExercises;
+  }
+
   void addExercise(Exercise exercise) {
     _exercises.add(exercise);
   }

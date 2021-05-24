@@ -17,6 +17,13 @@ class DbHelper {
   String colWorkoutId = "workoutId";
   String colWorkoutTitle = "title";
 
+  String tblSets = "set";
+  String colSetId = "setId";
+  String colExerciseId = "exerciseId";
+  String colWeight = "weight";
+  String colExReps = "reps"; // watch this
+  String colDate = "date";
+
   DbHelper._internal();
 
   factory DbHelper() {
@@ -47,8 +54,13 @@ class DbHelper {
         "CREATE TABLE $tblExercise($colId INTEGER PRIMARY KEY, $colName TEXT," +
             "$colReps INTEGER, $colSets INTEGER, $colWorkoutId INTEGER, " +
             "FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
+
+    await db.execute("CREATE TABLE $tblSets($colSetId INTEGER PRIMARY KEY, " +
+        "$colWeight DECIMAL, $colExReps INTEGER, $colDate TEXT, " +
+        "FOREIGN KEY($colExerciseId) REFERENCES $tblExercise($colId))");
   }
 
+  // *** WORKOUT TABLE METHODS ***
   Future<int> insertWorkout(Workout workout) async {
     Database db = await this.db;
     var result = await db.insert(tblWorkout, workout.toMap());
@@ -91,7 +103,9 @@ class DbHelper {
         .rawDelete("DELETE FROM $tblExercise WHERE $colWorkoutId = $id");
     return result;
   }
+  // *** END WORKOUT TABLE METHODS ***
 
+  // *** EXERCISE TABLE METHODS ***
   Future<int> insertExercise(Exercise exercise) async {
     Database db = await this.db;
     var result = await db.insert(tblExercise, exercise.toMap());
@@ -132,4 +146,9 @@ class DbHelper {
     result = await db.rawDelete("DELETE FROM $tblExercise WHERE $colId = $id");
     return result;
   }
+  // *** END EXERCISE TABLE METHODS ***
+
+  // *** SET TABLE METHODS ***
+
+  // *** END SET TABLE METHODS ***
 }

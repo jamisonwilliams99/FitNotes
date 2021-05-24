@@ -7,7 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
 import 'package:workout_tracking_app/model/workout.dart';
 import 'package:workout_tracking_app/screens/addexercise.dart';
+import 'package:workout_tracking_app/screens/workoutexecution.dart';
 import 'package:workout_tracking_app/util/dbhelper.dart';
+import 'package:workout_tracking_app/styles/styles.dart';
 
 class WorkoutView extends StatefulWidget {
   Workout workout;
@@ -49,6 +51,14 @@ class _WorkoutViewState extends State<WorkoutView> {
                   },
                   child: Icon(Icons.delete)),
             ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: GestureDetector(
+                  onTap: () {
+                    navigateToWorkoutExecution();
+                  },
+                  child: Icon(Icons.play_arrow)),
+            ),
           ],
         ),
         body: Column(
@@ -87,10 +97,6 @@ class _WorkoutViewState extends State<WorkoutView> {
     );
   }
 
-  TextStyle textStyle = TextStyle(
-    color: Colors.white,
-  );
-
   ListView workoutItems() {
     return ListView.builder(
       itemCount: count,
@@ -99,13 +105,13 @@ class _WorkoutViewState extends State<WorkoutView> {
         return Padding(
           padding: const EdgeInsets.fromLTRB(50.0, 15, 50.0, 0.0),
           child: Card(
-            color: Colors.indigo,
+            color: myIndigo,
             elevation: 2.0,
             child: ListTile(
               title: Center(
                 child: Text(
                   currentExercise.name,
-                  style: textStyle,
+                  style: whiteText,
                 ),
               ),
               subtitle: Center(
@@ -113,7 +119,7 @@ class _WorkoutViewState extends State<WorkoutView> {
                     currentExercise.sets.toString() +
                         "x" +
                         currentExercise.reps.toString(),
-                    style: textStyle),
+                    style: whiteText),
               ),
               onTap: () {
                 navigateToAddExercise(currentExercise);
@@ -177,5 +183,12 @@ class _WorkoutViewState extends State<WorkoutView> {
     if (result == true) {
       getData();
     }
+  }
+
+  void navigateToWorkoutExecution() async {
+    bool result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => WorkoutExecution(workout, exercises)));
   }
 }

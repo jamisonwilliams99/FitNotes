@@ -5,6 +5,7 @@ import 'package:workout_tracking_app/model/workout.dart';
 import 'package:workout_tracking_app/screens/addexercise.dart';
 import 'package:workout_tracking_app/screens/workoutview.dart';
 import 'package:workout_tracking_app/util/dbhelper.dart';
+import 'package:workout_tracking_app/styles/styles.dart';
 
 class WorkoutList extends StatefulWidget {
   @override
@@ -18,6 +19,11 @@ class _WorkoutListState extends State<WorkoutList> {
 
   @override
   Widget build(BuildContext context) {
+    if (workouts == null) {
+      workouts = <Workout>[];
+      getData();
+    }
+
     return Scaffold(
       body: workoutList(),
       floatingActionButton: FloatingActionButton.extended(
@@ -30,10 +36,6 @@ class _WorkoutListState extends State<WorkoutList> {
     );
   }
 
-  TextStyle textStyle = TextStyle(
-    color: Colors.white,
-  );
-
   ListView workoutList() {
     return ListView.builder(
         itemCount: count,
@@ -42,12 +44,12 @@ class _WorkoutListState extends State<WorkoutList> {
           return Padding(
             padding: const EdgeInsets.fromLTRB(50.0, 15, 50.0, 0.0),
             child: Card(
-              color: Colors.indigo,
+              color: myIndigo,
               child: ListTile(
                   title: Center(
                       child: Text(
                     currentWorkout.title,
-                    style: textStyle,
+                    style: whiteText,
                   )),
                   onTap: () {
                     navigateToWorkoutView(currentWorkout);

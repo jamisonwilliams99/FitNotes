@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
 import 'package:workout_tracking_app/util/dbhelper.dart';
 import 'package:intl/intl.dart';
+import 'package:workout_tracking_app/styles/styles.dart';
 
 DbHelper helper = DbHelper();
 
