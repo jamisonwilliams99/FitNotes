@@ -4,13 +4,10 @@ This Widget will display the base page when a user begins an exercise
 */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
 import 'package:workout_tracking_app/model/workout.dart';
 import 'package:workout_tracking_app/model/executedworkout.dart';
-import 'package:workout_tracking_app/screens/addexercise.dart';
 import 'package:workout_tracking_app/screens/exerciseexecution.dart';
-import 'package:workout_tracking_app/util/dbhelper.dart';
 import 'package:workout_tracking_app/styles/styles.dart';
 
 class WorkoutExecution extends StatefulWidget {
@@ -104,7 +101,7 @@ class _WorkoutExecutionState extends State<WorkoutExecution> {
   }
 
   void navigateToExerciseExecution(int position,
-      [bool clickedCard = false, int counter = 0]) async {
+      [bool clickedCard = false]) async {
     bool anotherExercise;
     if (!clickedCard) {
       anotherExercise = isAnotherExercise(position);
@@ -116,27 +113,27 @@ class _WorkoutExecutionState extends State<WorkoutExecution> {
                   executedWorkout,
                   completedSets[position],
                   position,
-                  clickedCard,
-                  counter,
                   anotherExercise,
                   navigateToExerciseExecution,
                   completeSet)));
     } else {
-      anotherExercise = isAnotherExercise(counter);
-      bool result = await Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ExerciseExecution(
-                  exercises[counter],
-                  executedWorkout,
-                  completedSets[counter],
-                  position,
-                  clickedCard,
-                  counter,
-                  anotherExercise,
-                  navigateToExerciseExecution,
-                  completeSet)));
+      for (int i = 0; i <= position; i++) {
+        ExerciseExecution exerciseExecution = ExerciseExecution(
+            exercises[i],
+            executedWorkout,
+            completedSets[i],
+            i,
+            isAnotherExercise(i),
+            navigateToExerciseExecution,
+            completeSet);
+        pushWithoutAnimation(exerciseExecution);
+      }
     }
+  }
+
+  Future<T> pushWithoutAnimation<T extends Object>(Widget page) {
+    Route route = NoAnimationPageRoute(builder: (BuildContext context) => page);
+    return Navigator.push(context, route);
   }
 }
 
@@ -144,7 +141,7 @@ class ExerciseCard extends StatefulWidget {
   Exercise exercise;
   int position; // index of exercise in exercises list
   List<bool> blockStates;
-  Function(int, [bool, int])
+  Function(int, [bool])
       navigate; // callback funciton for navigating to the exercise execuiton screen
   ExerciseCard(this.exercise, this.position, this.blockStates, this.navigate,
       {Key key})
@@ -159,7 +156,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
   Exercise exercise;
   int position;
   List<bool> blockStates;
-  Function(int, [bool, int]) navigate;
+  Function(int, [bool]) navigate;
   List<Widget> blocks = [];
   _ExerciseCardState(
       this.exercise, this.position, this.blockStates, this.navigate);
@@ -215,5 +212,15 @@ class _ExerciseCardState extends State<ExerciseCard> {
     } else {
       return myIndigo;
     }
+  }
+}
+
+class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
+  NoAnimationPageRoute({WidgetBuilder builder}) : super(builder: builder);
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    return child;
   }
 }

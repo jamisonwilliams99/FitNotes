@@ -23,19 +23,11 @@ class ExerciseExecution extends StatefulWidget {
   bool clickedCard;
   int counter;
   bool anotherExercise;
-  Function(int, [bool, int]) navigate;
+  Function(int) navigate;
   Function(void) completeSet;
 
-  ExerciseExecution(
-      this.exercise,
-      this.executedWorkout,
-      this.numCompletedSets,
-      this.position,
-      this.clickedCard,
-      this.counter,
-      this.anotherExercise,
-      this.navigate,
-      this.completeSet);
+  ExerciseExecution(this.exercise, this.executedWorkout, this.numCompletedSets,
+      this.position, this.anotherExercise, this.navigate, this.completeSet);
 
   @override
   _ExerciseExecutionState createState() => _ExerciseExecutionState(
@@ -43,8 +35,6 @@ class ExerciseExecution extends StatefulWidget {
       executedWorkout,
       numCompletedSets,
       position,
-      clickedCard,
-      counter,
       anotherExercise,
       navigate,
       completeSet);
@@ -58,7 +48,7 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
   bool clickedCard;
   int counter;
   bool anotherExercise;
-  Function(int, [bool, int]) navigate;
+  Function(int) navigate;
   Function(void) completeSet;
 
   List<ExecutedSet> executedSets;
@@ -73,8 +63,6 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
       this.executedWorkout,
       this.numCompletedSets,
       this.position,
-      this.clickedCard,
-      this.counter,
       this.anotherExercise,
       this.navigate,
       this.completeSet);
@@ -161,10 +149,10 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
     );
   }
 
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => recursiveNav());
-  }
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) => recursiveNav());
+  // }
 
   ListView setList() {
     return ListView.builder(
@@ -259,11 +247,11 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
     });
   }
 
-  void recursiveNav() {
-    if (clickedCard && counter < position) {
-      navigate(position, clickedCard, counter + 1);
-    }
-  }
+  // void recursiveNav() {
+  //   if (clickedCard && counter < position) {
+  //     navigate(position, clickedCard, counter + 1);
+  //   }
+  // }
 
   void navigateToNextExercise() {
     navigate(position + 1);
