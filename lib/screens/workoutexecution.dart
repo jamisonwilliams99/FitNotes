@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
 import 'package:workout_tracking_app/model/workout.dart';
+import 'package:workout_tracking_app/model/executedworkout.dart';
 import 'package:workout_tracking_app/screens/addexercise.dart';
 import 'package:workout_tracking_app/screens/exerciseexecution.dart';
 import 'package:workout_tracking_app/util/dbhelper.dart';
@@ -14,22 +15,25 @@ import 'package:workout_tracking_app/styles/styles.dart';
 
 class WorkoutExecution extends StatefulWidget {
   Workout workout;
+  ExecutedWorkout executedWorkout;
   List<Exercise> exercises;
-  WorkoutExecution(this.workout, this.exercises);
+  WorkoutExecution(this.workout, this.executedWorkout, this.exercises);
 
   @override
   _WorkoutExecutionState createState() =>
-      _WorkoutExecutionState(workout, exercises);
+      _WorkoutExecutionState(workout, executedWorkout, exercises);
 }
 
 class _WorkoutExecutionState extends State<WorkoutExecution> {
   Workout workout;
+  ExecutedWorkout executedWorkout;
   List<Exercise> exercises;
   List<List<bool>> exerciseSetStates = [];
   List<int> completedSets;
 
-  _WorkoutExecutionState(workout, exercises) {
+  _WorkoutExecutionState(workout, executedWorkout, exercises) {
     this.workout = workout;
+    this.executedWorkout = executedWorkout;
     this.exercises = exercises;
     completedSets = List.generate(exercises.length, (index) => 0);
     populateStates();
@@ -99,18 +103,40 @@ class _WorkoutExecutionState extends State<WorkoutExecution> {
       return false;
   }
 
-  void navigateToExerciseExecution(int position) async {
-    bool anotherExercise = isAnotherExercise(position);
-    bool result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ExerciseExecution(
-                exercises[position],
-                completedSets[position],
-                position,
-                anotherExercise,
-                navigateToExerciseExecution,
-                completeSet)));
+  void navigateToExerciseExecution(int position,
+      [bool clickedCard = false, int counter = 0]) async {
+    bool anotherExercise;
+    if (!clickedCard) {
+      anotherExercise = isAnotherExercise(position);
+      bool result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ExerciseExecution(
+                  exercises[position],
+                  executedWorkout,
+                  completedSets[position],
+                  position,
+                  clickedCard,
+                  counter,
+                  anotherExercise,
+                  navigateToExerciseExecution,
+                  completeSet)));
+    } else {
+      anotherExercise = isAnotherExercise(counter);
+      bool result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ExerciseExecution(
+                  exercises[counter],
+                  executedWorkout,
+                  completedSets[counter],
+                  position,
+                  clickedCard,
+                  counter,
+                  anotherExercise,
+                  navigateToExerciseExecution,
+                  completeSet)));
+    }
   }
 }
 
@@ -118,7 +144,7 @@ class ExerciseCard extends StatefulWidget {
   Exercise exercise;
   int position; // index of exercise in exercises list
   List<bool> blockStates;
-  Function(int)
+  Function(int, [bool, int])
       navigate; // callback funciton for navigating to the exercise execuiton screen
   ExerciseCard(this.exercise, this.position, this.blockStates, this.navigate,
       {Key key})
@@ -133,7 +159,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
   Exercise exercise;
   int position;
   List<bool> blockStates;
-  Function(int) navigate;
+  Function(int, [bool, int]) navigate;
   List<Widget> blocks = [];
   _ExerciseCardState(
       this.exercise, this.position, this.blockStates, this.navigate);
@@ -151,7 +177,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
             style: whiteText,
           )),
           onTap: () {
-            navigate(position);
+            navigate(position, true);
           },
         ),
       ),

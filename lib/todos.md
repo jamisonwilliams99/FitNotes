@@ -23,17 +23,6 @@ ExerciseExecution
 - when set is completed, the weight and reps used should be displayed inside of a listview
 
 
-
-
-
-
-
-NEED TO FIX:
-- in ExerciseExecution
-- - when the weight is changed for a new set, it modifies the weight in all the other cards in the listview
-- - this can be fixed by creating a list that stores the set information and indexing it with position variable
-
-
 FEATURES THAT NEED TO BE IMPLEMENTED:
 
 need to modify dbhelper so that it can save data from previously performed workouts
@@ -42,4 +31,14 @@ need to modify dbhelper so that it can save data from previously performed worko
 - date user did workout
 - PR for every exercise
 
-add ability to do supersets
+
+
+- fix how exercise executions are navigated: the back button should always go to the previous workout
+- - the issue is that when a card is clicked on, the position argument that is passed stays the same as the position of the
+    exercise card
+
+- might want to add another attribute to class ExecutedSet: setNumber
+- optimize input validation in ExerciseExecution
+- add input validation to entire app
+- add screen to view previously performed workouts
+- add ability to do supersets

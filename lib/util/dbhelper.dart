@@ -4,25 +4,35 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
 import 'package:workout_tracking_app/model/workout.dart';
+import 'package:workout_tracking_app/model/executedset.dart';
+import 'package:workout_tracking_app/model/executedworkout.dart';
 
 class DbHelper {
   static final DbHelper _dbHelper = DbHelper._internal();
+
+  // Exercise Table
   String tblExercise = "exercise";
   String colId = "id";
   String colName = "name";
   String colReps = "reps";
   String colSets = "sets";
 
+  // Workout table
   String tblWorkout = "workout";
   String colWorkoutId = "workoutId";
   String colWorkoutTitle = "title";
 
-  String tblSets = "set";
+  // Executed Workout table
+  String tblExecutedWorkout = "executedWorkout";
+  String colExWorkoutId = "executedWorkoutId";
+  String colDate = "date";
+
+  // Executed Set table
+  String tblSets = "sets";
   String colSetId = "setId";
   String colExerciseId = "exerciseId";
   String colWeight = "weight";
   String colExReps = "reps"; // watch this
-  String colDate = "date";
 
   DbHelper._internal();
 
@@ -55,8 +65,14 @@ class DbHelper {
             "$colReps INTEGER, $colSets INTEGER, $colWorkoutId INTEGER, " +
             "FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
 
+    await db.execute(
+        "CREATE TABLE $tblExecutedWorkout($colExWorkoutId INTEGER PRIMARY KEY," +
+            "$colDate TEXT, $colWorkoutId INTEGER, " +
+            "FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
+
     await db.execute("CREATE TABLE $tblSets($colSetId INTEGER PRIMARY KEY, " +
-        "$colWeight DECIMAL, $colExReps INTEGER, $colDate TEXT, " +
+        "$colWeight REAL, $colExReps INTEGER, $colDate TEXT, $colExWorkoutId INTEGER, $colExerciseId INTEGER, " +
+        "FOREIGN KEY($colExWorkoutId) REFERENCES $tblExecutedWorkout($colExWorkoutId), " +
         "FOREIGN KEY($colExerciseId) REFERENCES $tblExercise($colId))");
   }
 
@@ -149,6 +165,40 @@ class DbHelper {
   // *** END EXERCISE TABLE METHODS ***
 
   // *** SET TABLE METHODS ***
+  Future<int> insertExecutedSet(ExecutedSet executedSet) async {
+    Database db = await this.db;
+    var result = await db.insert(tblSets, executedSet.toMap());
+    return result;
+  }
 
+  // gets all sets in the database that are a part of a specific executed workout and for a specific exercise
+  Future<List> getExecutedSets(int executedWorkoutId, int exerciseId) async {
+    Database db = await this.db;
+    var result = db.rawQuery(
+        "SELECT * FROM $tblSets WHERE $colExWorkoutId = $executedWorkoutId AND $colExerciseId = $exerciseId");
+    return result;
+  }
+
+  Future deleteExecutedSet(int id) async {
+    int result;
+    var db = await this.db;
+    result = await db.rawDelete("DELETE FROM $tblSets WHERE $colSetId = $id");
+    return result;
+  }
   // *** END SET TABLE METHODS ***
+
+  // *** ExecutedWorkout TABLE METHODS ***
+  Future<int> insertExecutedWorkout(ExecutedWorkout executedWorkout) async {
+    Database db = await this.db;
+    var result = await db.insert(tblExecutedWorkout, executedWorkout.toMap());
+    return result;
+  }
+
+  Future<List> getExecutedWorkouts() async {
+    Database db = await this.db;
+    var result = db.rawQuery("SELECT * FROM $tblExecutedWorkout");
+    return result;
+  }
+
+  // *** END ExecutedWorkout TABLE METHODS ***
 }

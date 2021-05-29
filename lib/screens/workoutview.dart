@@ -6,10 +6,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
 import 'package:workout_tracking_app/model/workout.dart';
+import 'package:workout_tracking_app/model/executedworkout.dart';
 import 'package:workout_tracking_app/screens/addexercise.dart';
 import 'package:workout_tracking_app/screens/workoutexecution.dart';
 import 'package:workout_tracking_app/util/dbhelper.dart';
 import 'package:workout_tracking_app/styles/styles.dart';
+import 'package:intl/intl.dart';
+
+String getCurrentDate() {
+  var now = new DateTime.now();
+  var formatter = new DateFormat('yyyy-MM-dd');
+  String formattedDate = formatter.format(now);
+  return formattedDate;
+}
 
 class WorkoutView extends StatefulWidget {
   Workout workout;
@@ -55,7 +64,9 @@ class _WorkoutViewState extends State<WorkoutView> {
               padding: const EdgeInsets.all(10.0),
               child: GestureDetector(
                   onTap: () {
-                    navigateToWorkoutExecution();
+                    String date = getCurrentDate();
+                    navigateToWorkoutExecution(
+                        ExecutedWorkout.withWorkoutId(workout.id, date));
                   },
                   child: Icon(Icons.play_arrow)),
             ),
@@ -160,8 +171,7 @@ class _WorkoutViewState extends State<WorkoutView> {
     final dbFuture = helper.initializeDb();
 
     dbFuture.then((result) {
-      final exercisesFuture =
-          helper.getExercises(workout.id); // need to pass workoutId here
+      final exercisesFuture = helper.getExercises(workout.id);
       exercisesFuture.then((result) {
         List<Exercise> exerciseList = <Exercise>[];
         count = result.length;
@@ -185,10 +195,12 @@ class _WorkoutViewState extends State<WorkoutView> {
     }
   }
 
-  void navigateToWorkoutExecution() async {
+  void navigateToWorkoutExecution(ExecutedWorkout executedWorkout) async {
+    executedWorkout.id = await helper.insertExecutedWorkout(executedWorkout);
     bool result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => WorkoutExecution(workout, exercises)));
+            builder: (context) =>
+                WorkoutExecution(workout, executedWorkout, exercises)));
   }
 }
