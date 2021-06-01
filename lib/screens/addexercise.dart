@@ -13,16 +13,6 @@ import 'package:workout_tracking_app/styles/styles.dart';
 
 DbHelper helper = DbHelper();
 
-final List<String> choices = const <String>[
-  "Save Exercise",
-  "Delete Exercise",
-  "Back"
-];
-
-const mnuSave = "Save Exercise";
-const mnuDelete = "Delete Exercise";
-const mnuBack = "Back";
-
 class AddExercise extends StatefulWidget {
   final Exercise exercise;
 

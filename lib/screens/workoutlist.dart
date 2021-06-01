@@ -22,6 +22,9 @@ class _WorkoutListState extends State<WorkoutList> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Saved Workouts"),
+      ),
       body: workoutList(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {

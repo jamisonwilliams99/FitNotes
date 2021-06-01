@@ -67,7 +67,7 @@ class DbHelper {
 
     await db.execute(
         "CREATE TABLE $tblExecutedWorkout($colExWorkoutId INTEGER PRIMARY KEY," +
-            "$colDate TEXT, $colWorkoutId INTEGER, " +
+            "$colDate TEXT, $colWorkoutTitle TEXT, $colWorkoutId INTEGER, " +
             "FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
 
     await db.execute("CREATE TABLE $tblSets($colSetId INTEGER PRIMARY KEY, " +

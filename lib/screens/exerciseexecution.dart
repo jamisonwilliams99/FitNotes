@@ -149,11 +149,6 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
     );
   }
 
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) => recursiveNav());
-  // }
-
   ListView setList() {
     return ListView.builder(
       itemCount: executedSets.length,
@@ -168,7 +163,8 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
             subtitle: Text("Reps: " +
                 executedSets[position].reps.toString() +
                 "   Weight: " +
-                executedSets[position].weight.toString()),
+                executedSets[position].weight.toString() +
+                " lbs"),
           ),
         );
       },
@@ -246,12 +242,6 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
       });
     });
   }
-
-  // void recursiveNav() {
-  //   if (clickedCard && counter < position) {
-  //     navigate(position, clickedCard, counter + 1);
-  //   }
-  // }
 
   void navigateToNextExercise() {
     navigate(position + 1);

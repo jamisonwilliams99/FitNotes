@@ -65,8 +65,8 @@ class _WorkoutViewState extends State<WorkoutView> {
               child: GestureDetector(
                   onTap: () {
                     String date = getCurrentDate();
-                    navigateToWorkoutExecution(
-                        ExecutedWorkout.withWorkoutId(workout.id, date));
+                    navigateToWorkoutExecution(ExecutedWorkout.withWorkoutId(
+                        workout.id, date, workout.title));
                   },
                   child: Icon(Icons.play_arrow)),
             ),
