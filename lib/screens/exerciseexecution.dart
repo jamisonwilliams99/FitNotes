@@ -7,13 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:workout_tracking_app/model/executedworkout.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
-import 'package:workout_tracking_app/model/workout.dart';
 import 'package:workout_tracking_app/model/executedset.dart';
 import 'package:workout_tracking_app/screens/addexercise.dart';
-import 'package:workout_tracking_app/util/dbhelper.dart';
+import 'package:workout_tracking_app/util/noanimationpageroute.dart';
 import 'package:workout_tracking_app/styles/styles.dart';
-
-import '../model/workout.dart';
 
 class ExerciseExecution extends StatefulWidget {
   Exercise exercise;
@@ -86,11 +83,13 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
                 onTap: () {
                   if (anotherExercise) {
                     navigateToNextExercise();
+                  } else {
+                    navigateToWorkoutExecution(context);
                   }
                 },
                 child: Icon(
                   Icons.arrow_forward,
-                  color: anotherExercise ? Colors.white : Colors.transparent,
+                  //10color: anotherExercise ? Colors.white : Colors.transparent,
                 )),
           )
         ],
@@ -214,7 +213,7 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
     double weight = double.parse(weightController.text);
     int reps = int.parse(repsController.text);
     ExecutedSet executedSet = ExecutedSet.withExternalId(
-        exercise.id, executedWorkout.id, weight, reps);
+        exercise.id, executedWorkout.id, exercise.name, weight, reps);
     helper.insertExecutedSet(executedSet);
     setState(() {
       numCompletedSets = completeSet(position);
@@ -245,5 +244,11 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
 
   void navigateToNextExercise() {
     navigate(position + 1);
+  }
+
+  void navigateToWorkoutExecution(BuildContext context) {
+    for (int i = position; i >= 0; i--) {
+      Navigator.pop(context);
+    }
   }
 }

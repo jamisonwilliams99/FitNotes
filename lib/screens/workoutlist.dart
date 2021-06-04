@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workout_tracking_app/model/workout.dart';
 import 'package:workout_tracking_app/screens/workoutview.dart';
+import 'package:workout_tracking_app/screens/customappbar.dart';
 import 'package:workout_tracking_app/util/dbhelper.dart';
 import 'package:workout_tracking_app/styles/styles.dart';
 
@@ -22,9 +23,7 @@ class _WorkoutListState extends State<WorkoutList> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Saved Workouts"),
-      ),
+      appBar: CustomAppBar("Saved Workouts"),
       body: workoutList(),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {

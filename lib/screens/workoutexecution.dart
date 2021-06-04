@@ -9,6 +9,7 @@ import 'package:workout_tracking_app/model/workout.dart';
 import 'package:workout_tracking_app/model/executedworkout.dart';
 import 'package:workout_tracking_app/screens/exerciseexecution.dart';
 import 'package:workout_tracking_app/styles/styles.dart';
+import 'package:workout_tracking_app/util/noanimationpageroute.dart';
 
 class WorkoutExecution extends StatefulWidget {
   Workout workout;
@@ -53,13 +54,28 @@ class _WorkoutExecutionState extends State<WorkoutExecution> {
         ),
         body: Column(
           children: [
-            ElevatedButton(
-                //style: ElevatedButton.styleFrom(primary: myIndigo),
-                onPressed: () {
-                  navigateToExerciseExecution(0);
-                },
-                child: Text("Start from beginning")),
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: SizedBox(
+                width: 250,
+                child: ElevatedButton(
+                    onPressed: () {
+                      navigateToExerciseExecution(0);
+                    },
+                    child: Text("Start from beginning")),
+              ),
+            ),
             Expanded(child: exerciseCards()),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: SizedBox(
+                    width: 250,
+                    child: ElevatedButton(
+                        onPressed: () {}, child: Text("Complete Workout")),
+                  )),
+            ),
           ],
         ));
   }
@@ -212,15 +228,5 @@ class _ExerciseCardState extends State<ExerciseCard> {
     } else {
       return myIndigo;
     }
-  }
-}
-
-class NoAnimationPageRoute<T> extends MaterialPageRoute<T> {
-  NoAnimationPageRoute({WidgetBuilder builder}) : super(builder: builder);
-
-  @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
-    return child;
   }
 }

@@ -20,18 +20,20 @@ class ExecutedSet {
   int _id;
   int _exerciseId;
   int _executedWorkoutId;
+  String _name;
   double _weight;
   int _reps;
 
-  ExecutedSet(this._weight, this._reps);
+  ExecutedSet(this._name, this._weight, this._reps);
 
-  ExecutedSet.withExternalId(
-      this._exerciseId, this._executedWorkoutId, this._weight, this._reps);
+  ExecutedSet.withExternalId(this._exerciseId, this._executedWorkoutId,
+      this._name, this._weight, this._reps);
 
   // getters
   get id => _id;
   get exerciseId => _exerciseId;
   get executedWorkoutId => _executedWorkoutId;
+  get name => _name;
   get weight => _weight;
   get reps => _reps;
 
@@ -42,6 +44,10 @@ class ExecutedSet {
 
   set executedWorkoutId(int newExecutedWorkoutId) {
     _executedWorkoutId = newExecutedWorkoutId;
+  }
+
+  set name(String newName) {
+    _name = newName;
   }
 
   set weight(double newWeight) {
@@ -56,6 +62,7 @@ class ExecutedSet {
     var map = Map<String, dynamic>();
     map["exerciseId"] = _exerciseId;
     map["executedWorkoutId"] = _executedWorkoutId;
+    map["name"] = _name;
     map["weight"] = _weight;
     map["reps"] = _reps;
 
@@ -69,6 +76,7 @@ class ExecutedSet {
     this._id = o["setId"];
     this._exerciseId = o["exerciseId"];
     this._executedWorkoutId = o["executedWorkoutId"];
+    this._name = o["name"];
     this._weight = o["weight"];
     this._reps = o["reps"];
   }

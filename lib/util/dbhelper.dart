@@ -71,7 +71,7 @@ class DbHelper {
             "FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
 
     await db.execute("CREATE TABLE $tblSets($colSetId INTEGER PRIMARY KEY, " +
-        "$colWeight REAL, $colExReps INTEGER, $colDate TEXT, $colExWorkoutId INTEGER, $colExerciseId INTEGER, " +
+        "$colWeight REAL, $colExReps INTEGER, $colName TEXT, $colExWorkoutId INTEGER, $colExerciseId INTEGER, " +
         "FOREIGN KEY($colExWorkoutId) REFERENCES $tblExecutedWorkout($colExWorkoutId), " +
         "FOREIGN KEY($colExerciseId) REFERENCES $tblExercise($colId))");
   }

@@ -7,6 +7,7 @@ a workout. They will be asked to enter the exercise name, sets, and reps
 
 import 'package:flutter/material.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
+import 'package:workout_tracking_app/screens/customappbar.dart';
 import 'package:workout_tracking_app/util/dbhelper.dart';
 import 'package:intl/intl.dart';
 import 'package:workout_tracking_app/styles/styles.dart';
@@ -37,20 +38,17 @@ class _AddExerciseState extends State<AddExercise> {
     repsController.text = exercise.reps.toString();
     setsController.text = exercise.sets.toString();
 
+    Padding deleteIcon = Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: GestureDetector(
+          onTap: () {
+            delete();
+          },
+          child: Icon(Icons.delete)),
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text(exercise.name),
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: GestureDetector(
-                onTap: () {
-                  delete();
-                },
-                child: Icon(Icons.delete)),
-          )
-        ],
-      ),
+      appBar: CustomAppBar.withIcons(exercise.name, [deleteIcon]),
       body: Column(children: <Widget>[
         Padding(
           padding: const EdgeInsets.fromLTRB(50.0, 30.0, 50.0, 20.0),

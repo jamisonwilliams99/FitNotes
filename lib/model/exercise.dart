@@ -1,9 +1,13 @@
+import 'package:workout_tracking_app/model/executedset.dart';
+
 class Exercise {
   int _id;
   int _workoutId;
   String _name;
   int _reps;
   int _sets;
+
+  List<ExecutedSet> executedSets;
 
   Exercise(this._name, this._reps, this._sets);
 

@@ -3,12 +3,12 @@ This screen will display all of the exercies in a workout
 */
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
 import 'package:workout_tracking_app/model/workout.dart';
 import 'package:workout_tracking_app/model/executedworkout.dart';
 import 'package:workout_tracking_app/screens/addexercise.dart';
 import 'package:workout_tracking_app/screens/workoutexecution.dart';
+import 'package:workout_tracking_app/screens/customappbar.dart';
 import 'package:workout_tracking_app/util/dbhelper.dart';
 import 'package:workout_tracking_app/styles/styles.dart';
 import 'package:intl/intl.dart';
@@ -47,31 +47,30 @@ class _WorkoutViewState extends State<WorkoutView> {
       getData();
     }
 
+    Padding deleteWorkoutIcon = Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: GestureDetector(
+          onTap: () {
+            delete();
+          },
+          child: Icon(Icons.delete)),
+    );
+
+    Padding startWorkoutIcon = Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: GestureDetector(
+          onTap: () {
+            String date = getCurrentDate();
+            navigateToWorkoutExecution(
+                ExecutedWorkout.withWorkoutId(workout.id, date, workout.title));
+          },
+          child: Icon(Icons.play_arrow)),
+    );
+
     return WillPopScope(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(workout.title),
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: GestureDetector(
-                  onTap: () {
-                    delete();
-                  },
-                  child: Icon(Icons.delete)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: GestureDetector(
-                  onTap: () {
-                    String date = getCurrentDate();
-                    navigateToWorkoutExecution(ExecutedWorkout.withWorkoutId(
-                        workout.id, date, workout.title));
-                  },
-                  child: Icon(Icons.play_arrow)),
-            ),
-          ],
-        ),
+        appBar: CustomAppBar.withIcons(
+            workout.title, [deleteWorkoutIcon, startWorkoutIcon]),
         body: Column(
           children: [
             Center(

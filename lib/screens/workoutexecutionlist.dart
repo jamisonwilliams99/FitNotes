@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:workout_tracking_app/screens/executedworkoutdetail.dart';
+import 'package:workout_tracking_app/screens/customappbar.dart';
 import 'package:workout_tracking_app/model/executedworkout.dart';
-import 'package:workout_tracking_app/model/exercise.dart';
-import 'package:workout_tracking_app/model/workout.dart';
-import 'package:workout_tracking_app/model/executedset.dart';
-import 'package:workout_tracking_app/screens/addexercise.dart';
 import 'package:workout_tracking_app/util/dbhelper.dart';
 import 'package:workout_tracking_app/styles/styles.dart';
 
@@ -20,7 +18,7 @@ class WorkoutExecutionList extends StatefulWidget {
 class _WorkoutExecutionListState extends State<WorkoutExecutionList> {
   DbHelper helper = DbHelper();
   List<ExecutedWorkout> executedWorkouts;
-  int count;
+  int count = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +27,7 @@ class _WorkoutExecutionListState extends State<WorkoutExecutionList> {
       getData();
     }
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Executed Workouts"),
-        ),
-        body: workoutExecutionList());
+        appBar: CustomAppBar("Workout History"), body: workoutExecutionList());
   }
 
   // Todo: implement
@@ -55,6 +50,9 @@ class _WorkoutExecutionListState extends State<WorkoutExecutionList> {
                 subtitle: Center(
                   child: Text(currentWorkout.date),
                 ),
+                onTap: () {
+                  navigateToWorkoutDetail(position);
+                },
               ),
             ),
           );
@@ -80,5 +78,13 @@ class _WorkoutExecutionListState extends State<WorkoutExecutionList> {
         });
       });
     });
+  }
+
+  void navigateToWorkoutDetail(int position) async {
+    ExecutedWorkout executedWorkout = executedWorkouts[position];
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ExecutedWorkoutDetail(executedWorkout)));
   }
 }

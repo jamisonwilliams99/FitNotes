@@ -1,30 +1,23 @@
 
 FEATURES THAT NEED TO BE IMPLEMENTED:
-
-need to modify dbhelper so that it can save data from previously performed workouts
-- weight used
-- sets/reps actually done
-- date user did workout
-- PR for every exercise
-
-
-
-
-
-- build out listview in WorkoutExecutionList
-- - when a card in WorkoutExecutionList is clicked, it should display a summary of the workout:
-- -   - workout name
-- -   - date
-- -   - all of the executed set details
-
-
-- add stopwatch to workout execution
-
-- might want to add another attribute to class ExecutedSet: setNumber
-- optimize input validation in ExerciseExecution
-- add input validation to entire app
-- add screen to view previously performed workouts
 - add ability to do supersets
+- add ability to search for a workout name in 
+- add stopwatch to workout execution
+- allow user to reorder exercises in workout
 
-- fix how exercise executions are navigated: the back button should always go to the previous workout
-- - it works now, animations are just a little off but can worry about that later
+
+
+
+Needs fixed:
+- an executed workout should not be tracked unless a set is actually completed
+- add input validation to entire app
+- need to add button on the last exercise in a exercise execution to "complete workout"
+- - this should save the workout execution
+
+
+OPTIMIZATION:
+- optimize input validation in ExerciseExecution
+- dispose of controllers to prevent memory leaks
+- may need to get rid of getSets() in executedworkoutdetail.dart and just add a getData() method to executedexercisedetail.dart
+- - not sure which is more optimal
+
