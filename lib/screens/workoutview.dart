@@ -84,8 +84,7 @@ class _WorkoutViewState extends State<WorkoutView> {
                   decoration: InputDecoration(
                       labelText: "Workout Title",
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                              5.0))), // need to define the titleUpdate function
+                          borderRadius: BorderRadius.circular(5.0))),
                 ),
               ),
             ),
@@ -107,34 +106,43 @@ class _WorkoutViewState extends State<WorkoutView> {
     );
   }
 
-  ListView workoutItems() {
-    return ListView.builder(
+  ReorderableListView workoutItems() {
+    return ReorderableListView.builder(
+      onReorder: (oldIndex, newIndex) {
+        setState(() {
+          if (oldIndex < newIndex) {
+            newIndex -= 1;
+          }
+          Exercise exercise = exercises.removeAt(oldIndex);
+          exercises.insert(newIndex, exercise);
+        });
+      },
+      padding: EdgeInsets.fromLTRB(50.0, 15, 50.0, 0.0),
       itemCount: count,
       itemBuilder: (BuildContext context, int position) {
         Exercise currentExercise = this.exercises[position];
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(50.0, 15, 50.0, 0.0),
-          child: Card(
-            color: myIndigo,
-            elevation: 2.0,
-            child: ListTile(
-              title: Center(
-                child: Text(
-                  currentExercise.name,
-                  style: whiteText,
-                ),
+        child:
+        return Card(
+          key: ValueKey(currentExercise.id),
+          color: myIndigo,
+          elevation: 2.0,
+          child: ListTile(
+            title: Center(
+              child: Text(
+                currentExercise.name,
+                style: whiteText,
               ),
-              subtitle: Center(
-                child: Text(
-                    currentExercise.sets.toString() +
-                        "x" +
-                        currentExercise.reps.toString(),
-                    style: whiteText),
-              ),
-              onTap: () {
-                navigateToAddExercise(currentExercise);
-              },
             ),
+            subtitle: Center(
+              child: Text(
+                  currentExercise.sets.toString() +
+                      "x" +
+                      currentExercise.reps.toString(),
+                  style: whiteText),
+            ),
+            onTap: () {
+              navigateToAddExercise(currentExercise);
+            },
           ),
         );
       },

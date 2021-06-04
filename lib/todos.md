@@ -1,5 +1,10 @@
+CURRENTLY WORKING ON:
+    Trying to get ReorderableListView working properly in WorkoutView
+
+
 
 FEATURES THAT NEED TO BE IMPLEMENTED:
+- add function to complete workout button in WorkoutExecution
 - add ability to do supersets
 - add ability to search for a workout name in 
 - add stopwatch to workout execution
@@ -9,10 +14,16 @@ FEATURES THAT NEED TO BE IMPLEMENTED:
 
 
 Needs fixed:
+- when the order of exercises is changed in WorkoutView, it is not saved
+- - this will require a order number field to be added to the exercises database in the exercises table
+
+- when changing the order of exercises in WorkoutView, the animation causes the setsxreps subtitle in the card to shift down
+- - also, there is a weird border placed around the card
+
 - an executed workout should not be tracked unless a set is actually completed
+
 - add input validation to entire app
-- need to add button on the last exercise in a exercise execution to "complete workout"
-- - this should save the workout execution
+
 
 
 OPTIMIZATION:
