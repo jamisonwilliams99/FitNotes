@@ -93,7 +93,8 @@ class _WorkoutViewState extends State<WorkoutView> {
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            navigateToAddExercise(Exercise.withWorkoutId(workout.id, "", 0, 0));
+            navigateToAddExercise(Exercise.withWorkoutId(
+                workout.id, "", 0, 0, exercises.length + 1));
           },
           tooltip: "Add new exercise",
           label: Text("Add New Exercise"),
@@ -115,6 +116,7 @@ class _WorkoutViewState extends State<WorkoutView> {
           }
           Exercise exercise = exercises.removeAt(oldIndex);
           exercises.insert(newIndex, exercise);
+          updateExerciseOrder();
         });
       },
       padding: EdgeInsets.fromLTRB(50.0, 15, 50.0, 0.0),
@@ -159,6 +161,13 @@ class _WorkoutViewState extends State<WorkoutView> {
     helper.updateWorkout(workout);
   }
 
+  void updateExerciseOrder() {
+    for (int i = 0; i < exercises.length; i++) {
+      exercises[i].orderNum = i + 1;
+      helper.updateExercise(exercises[i]);
+    }
+  }
+
   void delete() async {
     int result;
     int deletedExercises;
@@ -186,6 +195,7 @@ class _WorkoutViewState extends State<WorkoutView> {
           Exercise currentExercise = Exercise.fromObject(result[i]);
           exerciseList.add(currentExercise);
         }
+        exerciseList.sort((a, b) => a.orderNum.compareTo(b.orderNum));
         setState(() {
           count = count;
           exercises = exerciseList;

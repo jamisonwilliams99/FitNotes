@@ -16,6 +16,7 @@ FEATURES THAT NEED TO BE IMPLEMENTED:
 Needs fixed:
 - when the order of exercises is changed in WorkoutView, it is not saved
 - - this will require a order number field to be added to the exercises database in the exercises table
+- -   - Fixed this, the order is just not maintained in the saved workout execution
 
 - when changing the order of exercises in WorkoutView, the animation causes the setsxreps subtitle in the card to shift down
 - - also, there is a weird border placed around the card

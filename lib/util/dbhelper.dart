@@ -16,6 +16,7 @@ class DbHelper {
   String colName = "name";
   String colReps = "reps";
   String colSets = "sets";
+  String colOrderNum = "orderNum";
 
   // Workout table
   String tblWorkout = "workout";
@@ -62,7 +63,7 @@ class DbHelper {
 
     await db.execute(
         "CREATE TABLE $tblExercise($colId INTEGER PRIMARY KEY, $colName TEXT," +
-            "$colReps INTEGER, $colSets INTEGER, $colWorkoutId INTEGER, " +
+            "$colReps INTEGER, $colSets INTEGER, $colOrderNum INTEGER, $colWorkoutId INTEGER, " +
             "FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
 
     await db.execute(

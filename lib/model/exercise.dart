@@ -6,15 +6,17 @@ class Exercise {
   String _name;
   int _reps;
   int _sets;
+  int _orderNum;
 
   List<ExecutedSet> executedSets;
 
   Exercise(this._name, this._reps, this._sets);
 
-  Exercise.withId(this._id, this._name, this._reps,
-      this._sets); // still need to add workoutId to this
+  Exercise.withId(this._id, this._name, this._reps, this._sets,
+      this._orderNum); // still need to add workoutId to this
 
-  Exercise.withWorkoutId(this._workoutId, this._name, this._reps, this._sets);
+  Exercise.withWorkoutId(
+      this._workoutId, this._name, this._reps, this._sets, this._orderNum);
 
   // getters
   int get id => _id;
@@ -22,6 +24,7 @@ class Exercise {
   String get name => _name;
   int get reps => _reps;
   int get sets => _sets;
+  int get orderNum => _orderNum;
 
   // setters
   set workoutId(int newWorkoutId) {
@@ -40,12 +43,17 @@ class Exercise {
     _sets = newSets;
   }
 
+  set orderNum(int newOrderNum) {
+    _orderNum = newOrderNum;
+  }
+
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
+    map["workoutId"] = _workoutId;
     map["name"] = _name;
     map["reps"] = _reps;
     map["sets"] = _sets;
-    map["workoutId"] = _workoutId;
+    map["orderNum"] = _orderNum;
 
     if (_id != null) {
       map["id"] = _id;
@@ -59,5 +67,6 @@ class Exercise {
     this._name = o["name"];
     this._reps = o["reps"];
     this._sets = o["sets"];
+    this._orderNum = o["orderNum"];
   }
 }

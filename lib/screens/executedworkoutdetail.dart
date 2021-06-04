@@ -77,6 +77,7 @@ class _ExecutedWorkoutDetailState extends State<ExecutedWorkoutDetail> {
           exercise.executedSets = getSets(exercise.id, executedWorkout.id);
           exerciseList.add(exercise);
         }
+        exerciseList.sort((a, b) => a.orderNum.compareTo(b.orderNum));
         setState(() {
           exercises = exerciseList;
           count = count;
