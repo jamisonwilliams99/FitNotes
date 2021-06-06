@@ -17,7 +17,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'FitNotes',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(primaryColor: myIndigo, primarySwatch: Colors.indigo),
+      theme: ThemeData(
+          fontFamily: 'Roboto',
+          primaryColor: myIndigo,
+          primarySwatch: Colors.indigo,
+          scaffoldBackgroundColor: Colors.grey[400]),
       home: HomePage(),
     );
   }

@@ -15,7 +15,7 @@ import 'package:workout_tracking_app/styles/styles.dart';
 DbHelper helper = DbHelper();
 
 class AddExercise extends StatefulWidget {
-  final Exercise exercise;
+  final StandAloneExercise exercise;
 
   AddExercise(this.exercise);
 
@@ -24,7 +24,7 @@ class AddExercise extends StatefulWidget {
 }
 
 class _AddExerciseState extends State<AddExercise> {
-  Exercise exercise;
+  StandAloneExercise exercise;
 
   _AddExerciseState(this.exercise);
 
@@ -109,7 +109,7 @@ class _AddExerciseState extends State<AddExercise> {
     if (exercise.id == null) {
       return;
     }
-    result = await helper.deleteExercise(exercise.id);
+    result = await helper.deleteStandAloneExercise(exercise.id);
     if (result != 0) {
       AlertDialog alertDialog = AlertDialog(content: Text("Exercise deleted"));
       showDialog(context: context, builder: (_) => alertDialog);
@@ -118,9 +118,9 @@ class _AddExerciseState extends State<AddExercise> {
 
   void save() {
     if (exercise.id != null) {
-      helper.updateExercise(exercise);
+      helper.updateStandAloneExercise(exercise);
     } else {
-      helper.insertExercise(exercise);
+      helper.insertStandAloneExercise(exercise);
     }
     Navigator.pop(context, true);
   }

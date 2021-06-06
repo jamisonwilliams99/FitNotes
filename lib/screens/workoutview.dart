@@ -88,17 +88,34 @@ class _WorkoutViewState extends State<WorkoutView> {
                 ),
               ),
             ),
-            Expanded(child: workoutItems()),
+            Expanded(child: fixReorderableListViewAnimation()),
           ],
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            navigateToAddExercise(Exercise.withWorkoutId(
-                workout.id, "", 0, 0, exercises.length + 1));
-          },
-          tooltip: "Add new exercise",
-          label: Text("Add New Exercise"),
-          icon: Icon(Icons.add),
+        floatingActionButton: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 40.0),
+              child: FloatingActionButton.extended(
+                  heroTag: null,
+                  onPressed: () {},
+                  backgroundColor: Colors.black,
+                  label: Text("Add Superset"),
+                  icon: Icon(Icons.add)),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: FloatingActionButton.extended(
+                heroTag: null,
+                onPressed: () {
+                  navigateToAddExercise(StandAloneExercise.withWorkoutId(
+                      workout.id, "", 0, 0, exercises.length + 1));
+                },
+                tooltip: "Add new exercise",
+                label: Text("Add Exercise"),
+                icon: Icon(Icons.add),
+              ),
+            ),
+          ],
         ),
       ),
       onWillPop: () {
@@ -114,7 +131,7 @@ class _WorkoutViewState extends State<WorkoutView> {
           if (oldIndex < newIndex) {
             newIndex -= 1;
           }
-          Exercise exercise = exercises.removeAt(oldIndex);
+          StandAloneExercise exercise = exercises.removeAt(oldIndex);
           exercises.insert(newIndex, exercise);
           updateExerciseOrder();
         });
@@ -122,7 +139,7 @@ class _WorkoutViewState extends State<WorkoutView> {
       padding: EdgeInsets.fromLTRB(50.0, 15, 50.0, 0.0),
       itemCount: count,
       itemBuilder: (BuildContext context, int position) {
-        Exercise currentExercise = this.exercises[position];
+        StandAloneExercise currentExercise = this.exercises[position];
         child:
         return Card(
           key: ValueKey(currentExercise.id),
@@ -151,6 +168,12 @@ class _WorkoutViewState extends State<WorkoutView> {
     );
   }
 
+  Theme fixReorderableListViewAnimation() {
+    return Theme(
+        data: ThemeData(canvasColor: Colors.transparent),
+        child: workoutItems());
+  }
+
   void save() {
     helper.updateWorkout(workout);
     Navigator.pop(context, true);
@@ -164,7 +187,7 @@ class _WorkoutViewState extends State<WorkoutView> {
   void updateExerciseOrder() {
     for (int i = 0; i < exercises.length; i++) {
       exercises[i].orderNum = i + 1;
-      helper.updateExercise(exercises[i]);
+      helper.updateStandAloneExercise(exercises[i]);
     }
   }
 
@@ -187,12 +210,13 @@ class _WorkoutViewState extends State<WorkoutView> {
     final dbFuture = helper.initializeDb();
 
     dbFuture.then((result) {
-      final exercisesFuture = helper.getExercises(workout.id);
+      final exercisesFuture = helper.getStandAloneExercises(workout.id);
       exercisesFuture.then((result) {
         List<Exercise> exerciseList = <Exercise>[];
         count = result.length;
         for (int i = 0; i < count; i++) {
-          Exercise currentExercise = Exercise.fromObject(result[i]);
+          StandAloneExercise currentExercise =
+              StandAloneExercise.fromObject(result[i]);
           exerciseList.add(currentExercise);
         }
         exerciseList.sort((a, b) => a.orderNum.compareTo(b.orderNum));

@@ -68,7 +68,8 @@ class _ExecutedWorkoutDetailState extends State<ExecutedWorkoutDetail> {
     final dbFuture = helper.initializeDb();
 
     dbFuture.then((result) {
-      final exercisesFuture = helper.getExercises(executedWorkout.workoutId);
+      final exercisesFuture =
+          helper.getStandAloneExercises(executedWorkout.workoutId);
       exercisesFuture.then((result) {
         List<Exercise> exerciseList = <Exercise>[];
         count = result.length;

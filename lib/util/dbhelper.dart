@@ -11,7 +11,8 @@ class DbHelper {
   static final DbHelper _dbHelper = DbHelper._internal();
 
   // Exercise Table
-  String tblExercise = "exercise";
+  String tblStandAloneExercise = "standAloneExercise";
+  String tblSuperSetExercise = "superSetExercise";
   String colId = "id";
   String colName = "name";
   String colReps = "reps";
@@ -22,6 +23,10 @@ class DbHelper {
   String tblWorkout = "workout";
   String colWorkoutId = "workoutId";
   String colWorkoutTitle = "title";
+
+  // SuperSetTable
+  String tblSuperSet = "superSet";
+  String colSuperSetId = "superSetId";
 
   // Executed Workout table
   String tblExecutedWorkout = "executedWorkout";
@@ -62,19 +67,28 @@ class DbHelper {
         "CREATE TABLE $tblWorkout($colWorkoutId INTEGER PRIMARY KEY, $colWorkoutTitle TEXT)");
 
     await db.execute(
-        "CREATE TABLE $tblExercise($colId INTEGER PRIMARY KEY, $colName TEXT," +
+        "CREATE TABLE $tblSuperSet($colSuperSetId INTEGER PRIMARY KEY, $colWorkoutId INTEGER, FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
+
+    await db.execute(
+        "CREATE TABLE $tblStandAloneExercise($colId INTEGER PRIMARY KEY, $colName TEXT," +
             "$colReps INTEGER, $colSets INTEGER, $colOrderNum INTEGER, $colWorkoutId INTEGER, " +
             "FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
+
+    await db.execute(
+        "CREATE TABLE $tblSuperSetExercise($colId INTEGER PRIMARY KEY, $colName TEXT," +
+            "$colReps INTEGER, $colSets INTEGER, $colOrderNum INTEGER, $colWorkoutId INTEGER, $colSuperSetId INTEGER, " +
+            "FOREIGN KEY($colSuperSetId) REFERENCES $tblSuperSet($colSuperSetId))");
 
     await db.execute(
         "CREATE TABLE $tblExecutedWorkout($colExWorkoutId INTEGER PRIMARY KEY," +
             "$colDate TEXT, $colWorkoutTitle TEXT, $colWorkoutId INTEGER, " +
             "FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
 
+    // this will need to be fixed later
     await db.execute("CREATE TABLE $tblSets($colSetId INTEGER PRIMARY KEY, " +
         "$colWeight REAL, $colExReps INTEGER, $colName TEXT, $colExWorkoutId INTEGER, $colExerciseId INTEGER, " +
         "FOREIGN KEY($colExWorkoutId) REFERENCES $tblExecutedWorkout($colExWorkoutId), " +
-        "FOREIGN KEY($colExerciseId) REFERENCES $tblExercise($colId))");
+        "FOREIGN KEY($colExerciseId) REFERENCES $tblStandAloneExercise($colId))");
   }
 
   // *** WORKOUT TABLE METHODS ***
@@ -116,51 +130,52 @@ class DbHelper {
   Future<int> deleteWorkoutExercises(int id) async {
     int result;
     var db = await this.db;
-    result = await db
-        .rawDelete("DELETE FROM $tblExercise WHERE $colWorkoutId = $id");
+    result = await db.rawDelete(
+        "DELETE FROM $tblStandAloneExercise WHERE $colWorkoutId = $id");
     return result;
   }
   // *** END WORKOUT TABLE METHODS ***
 
   // *** EXERCISE TABLE METHODS ***
-  Future<int> insertExercise(Exercise exercise) async {
+  Future<int> insertStandAloneExercise(StandAloneExercise exercise) async {
     Database db = await this.db;
-    var result = await db.insert(tblExercise, exercise.toMap());
+    var result = await db.insert(tblStandAloneExercise, exercise.toMap());
     return result;
   }
 
   // Get all exercises that are a part of the current workout
-  Future<List> getExercises(int workoutId) async {
+  Future<List> getStandAloneExercises(int workoutId) async {
     Database db = await this.db;
     var result = db.rawQuery(
-        "SELECT * FROM $tblExercise WHERE $colWorkoutId = $workoutId");
+        "SELECT * FROM $tblStandAloneExercise WHERE $colWorkoutId = $workoutId");
     return result;
   }
 
-  Future<List> getAllExercises() async {
+  Future<List> getAllStandAloneExercises() async {
     Database db = await this.db;
-    var result = db.rawQuery("SELECT * FROM $tblExercise");
+    var result = db.rawQuery("SELECT * FROM $tblStandAloneExercise");
     return result;
   }
 
-  Future<int> getExerciseCount() async {
+  Future<int> getStandAloneExerciseCount() async {
     Database db = await this.db;
     var result = Sqflite.firstIntValue(
-        await db.rawQuery("SELECT COUNT (*) FROM $tblExercise"));
+        await db.rawQuery("SELECT COUNT (*) FROM $tblStandAloneExercise"));
     return result;
   }
 
-  Future<int> updateExercise(Exercise exercise) async {
+  Future<int> updateStandAloneExercise(StandAloneExercise exercise) async {
     var db = await this.db;
-    var result = await db.update(tblExercise, exercise.toMap(),
+    var result = await db.update(tblStandAloneExercise, exercise.toMap(),
         where: "$colId = ?", whereArgs: [exercise.id]);
     return result;
   }
 
-  Future<int> deleteExercise(int id) async {
+  Future<int> deleteStandAloneExercise(int id) async {
     int result;
     var db = await this.db;
-    result = await db.rawDelete("DELETE FROM $tblExercise WHERE $colId = $id");
+    result = await db
+        .rawDelete("DELETE FROM $tblStandAloneExercise WHERE $colId = $id");
     return result;
   }
   // *** END EXERCISE TABLE METHODS ***
