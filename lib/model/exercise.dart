@@ -24,7 +24,6 @@ class Exercise implements WorkoutItem {
 
   // getters
   int get id => _id;
-
   String get name => _name;
   int get reps => _reps;
   int get sets => _sets;
@@ -33,6 +32,10 @@ class Exercise implements WorkoutItem {
   // setters
   set name(String newName) {
     _name = newName;
+  }
+
+  set id(int newId) {
+    _id = newId;
   }
 
   set reps(int newReps) {

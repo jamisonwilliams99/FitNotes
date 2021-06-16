@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
 import 'package:workout_tracking_app/model/workout.dart';
+import 'package:workout_tracking_app/model/workoutitem.dart';
+import 'package:workout_tracking_app/model/superset.dart';
 import 'package:workout_tracking_app/model/executedset.dart';
 import 'package:workout_tracking_app/model/executedworkout.dart';
 
@@ -63,27 +65,33 @@ class DbHelper {
   }
 
   void _createDb(Database db, int newVersion) async {
+    // create workout table
     await db.execute(
         "CREATE TABLE $tblWorkout($colWorkoutId INTEGER PRIMARY KEY, $colWorkoutTitle TEXT)");
 
+    // create superset table
     await db.execute(
-        "CREATE TABLE $tblSuperSet($colSuperSetId INTEGER PRIMARY KEY, $colWorkoutId INTEGER, FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
+        "CREATE TABLE $tblSuperSet($colSuperSetId INTEGER PRIMARY KEY,  $colOrderNum INTEGER, $colWorkoutId INTEGER, FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
 
+    // create stand alone exercise table
     await db.execute(
         "CREATE TABLE $tblStandAloneExercise($colId INTEGER PRIMARY KEY, $colName TEXT," +
             "$colReps INTEGER, $colSets INTEGER, $colOrderNum INTEGER, $colWorkoutId INTEGER, " +
             "FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
 
+    // create superset exercise table
     await db.execute(
         "CREATE TABLE $tblSuperSetExercise($colId INTEGER PRIMARY KEY, $colName TEXT," +
             "$colReps INTEGER, $colSets INTEGER, $colOrderNum INTEGER, $colWorkoutId INTEGER, $colSuperSetId INTEGER, " +
             "FOREIGN KEY($colSuperSetId) REFERENCES $tblSuperSet($colSuperSetId))");
 
+    // create executed workout table
     await db.execute(
         "CREATE TABLE $tblExecutedWorkout($colExWorkoutId INTEGER PRIMARY KEY," +
             "$colDate TEXT, $colWorkoutTitle TEXT, $colWorkoutId INTEGER, " +
             "FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
 
+    // create executed sets table
     // this will need to be fixed later
     await db.execute("CREATE TABLE $tblSets($colSetId INTEGER PRIMARY KEY, " +
         "$colWeight REAL, $colExReps INTEGER, $colName TEXT, $colExWorkoutId INTEGER, $colExerciseId INTEGER, " +
@@ -134,7 +142,60 @@ class DbHelper {
         "DELETE FROM $tblStandAloneExercise WHERE $colWorkoutId = $id");
     return result;
   }
+
+  Future<int> deleteWorkoutSuperSets(int id) async {
+    int result;
+    var db = await this.db;
+    result = await db
+        .rawDelete("DELETE FROM $tblSuperSet WHERE $colWorkoutId = $id");
+    return result;
+  }
   // *** END WORKOUT TABLE METHODS ***
+
+  // *** SUPERSET TABLE METHODS ***
+  Future<int> insertSuperSet(SuperSet superSet) async {
+    Database db = await this.db;
+    var result = await db.insert(tblSuperSet, superSet.toMap());
+    return result;
+  }
+
+  Future<List> getSuperSets(int workoutId) async {
+    Database db = await this.db;
+    var result = db.rawQuery(
+        "SELECT * FROM $tblSuperSet WHERE $colWorkoutId = $workoutId");
+    return result;
+  }
+
+  Future<int> getSuperSetCount() async {
+    Database db = await this.db;
+    var result = Sqflite.firstIntValue(
+        await db.rawQuery("SELECT COUNT (*) FROM $tblSuperSet"));
+    return result;
+  }
+
+  Future<int> deleteSuperSet(int id) async {
+    int result;
+    var db = await this.db;
+    result = await db
+        .rawDelete("DELETE FROM $tblSuperSet WHERE $colSuperSetId = $id");
+    return result;
+  }
+
+  Future<int> updateSuperSet(SuperSet superSet) async {
+    var db = await this.db;
+    var result = await db.update(tblSuperSetExercise, superSet.toMap(),
+        where: "$colId = ?", whereArgs: [superSet.id]);
+    return result;
+  }
+
+  Future<int> deleteSuperSetExercises(int id) async {
+    int result;
+    var db = await this.db;
+    result = await db.rawDelete(
+        "DELETE FROM $tblSuperSetExercise WHERE $colSuperSetId = $id");
+    return result;
+  }
+  //
 
   // *** EXERCISE TABLE METHODS ***
   Future<int> insertStandAloneExercise(StandAloneExercise exercise) async {
@@ -143,11 +204,24 @@ class DbHelper {
     return result;
   }
 
+  Future<int> insertSuperSetExercise(SuperSetExercise exercise) async {
+    Database db = await this.db;
+    var result = await db.insert(tblSuperSetExercise, exercise.toMap());
+    return result;
+  }
+
   // Get all exercises that are a part of the current workout
   Future<List> getStandAloneExercises(int workoutId) async {
     Database db = await this.db;
     var result = db.rawQuery(
         "SELECT * FROM $tblStandAloneExercise WHERE $colWorkoutId = $workoutId");
+    return result;
+  }
+
+  Future<List> getSuperSetExercises(int superSetId) async {
+    Database db = await this.db;
+    var result = db.rawQuery(
+        "SELECT * FROM $tblSuperSetExercise WHERE $colSuperSetId = $superSetId");
     return result;
   }
 
@@ -164,9 +238,23 @@ class DbHelper {
     return result;
   }
 
+  Future<int> getSuperSetExerciseCount() async {
+    Database db = await this.db;
+    var result = Sqflite.firstIntValue(
+        await db.rawQuery("SELECT COUNT (*) FROM $tblSuperSetExercise"));
+    return result;
+  }
+
   Future<int> updateStandAloneExercise(StandAloneExercise exercise) async {
     var db = await this.db;
     var result = await db.update(tblStandAloneExercise, exercise.toMap(),
+        where: "$colId = ?", whereArgs: [exercise.id]);
+    return result;
+  }
+
+  Future<int> updateSuperSetExercise(SuperSetExercise exercise) async {
+    var db = await this.db;
+    var result = await db.update(tblSuperSetExercise, exercise.toMap(),
         where: "$colId = ?", whereArgs: [exercise.id]);
     return result;
   }
@@ -176,6 +264,14 @@ class DbHelper {
     var db = await this.db;
     result = await db
         .rawDelete("DELETE FROM $tblStandAloneExercise WHERE $colId = $id");
+    return result;
+  }
+
+  Future<int> deleteSuperSetExercise(int id) async {
+    int result;
+    var db = await this.db;
+    result = await db
+        .rawDelete("DELETE FROM $tblSuperSetExercise WHERE $colId = $id");
     return result;
   }
   // *** END EXERCISE TABLE METHODS ***

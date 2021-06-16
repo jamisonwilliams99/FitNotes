@@ -26,6 +26,13 @@ FEATURES THAT NEED TO BE IMPLEMENTED:
 
 
 Needs fixed:
+- when a workout is deleted:
+    - need to delete all exercises and supersets with that workout
+    -   - also need to delete all exercises within each superset that is deleted
+
+- order attributes of exercises and supersets need to be updated when 
+  items are added and removed from lists
+
 - when changing the order of exercises in WorkoutView, the animation causes the setsxreps subtitle in the card to shift down
 - - also, there is a weird border placed around the card
 
@@ -34,6 +41,8 @@ Needs fixed:
 - an executed workout should not be tracked unless a set is actually completed
 
 - add input validation to entire app
+
+- changes made to a workout after it has been executed will be applied to saved workout executions
 
 
 
@@ -56,4 +65,17 @@ Attributes:
   id
   workoutId
   orderNum
+
+Need to create dBHelper Methods for SuperSets and SuperSetExercise
+
+Need to modify WorkoutView so that the list of exercises is changed to a list of WorkoutItems (which can be either a superset or a standalone exercise)
+
+Complete AddSuperSet page
+
+need to figure out how to display all of the superset exercises in a single superset card in WorkoutView
+
+
+issues:
+superset exercises are not being recovered properly after created
+
 
