@@ -183,8 +183,8 @@ class DbHelper {
 
   Future<int> updateSuperSet(SuperSet superSet) async {
     var db = await this.db;
-    var result = await db.update(tblSuperSetExercise, superSet.toMap(),
-        where: "$colId = ?", whereArgs: [superSet.id]);
+    var result = await db.update(tblSuperSet, superSet.toMap(),
+        where: "$colSuperSetId = ?", whereArgs: [superSet.id]);
     return result;
   }
 

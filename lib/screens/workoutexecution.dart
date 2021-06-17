@@ -1,9 +1,10 @@
 /*
-This Widget will display the base page when a user begins an exercise
-- it will need to receive the list of exercises from WorkoutView
+This Widget will display the base page when a user begins an WorkoutItem
+- it will need to receive the list of workoutItems from WorkoutView
 */
 
 import 'package:flutter/material.dart';
+import 'package:workout_tracking_app/model/workoutitem.dart';
 import 'package:workout_tracking_app/model/exercise.dart';
 import 'package:workout_tracking_app/model/workout.dart';
 import 'package:workout_tracking_app/model/executedworkout.dart';
@@ -14,35 +15,35 @@ import 'package:workout_tracking_app/util/noanimationpageroute.dart';
 class WorkoutExecution extends StatefulWidget {
   Workout workout;
   ExecutedWorkout executedWorkout;
-  List<Exercise> exercises;
-  WorkoutExecution(this.workout, this.executedWorkout, this.exercises);
+  List<WorkoutItem> workoutItems;
+  WorkoutExecution(this.workout, this.executedWorkout, this.workoutItems);
 
   @override
   _WorkoutExecutionState createState() =>
-      _WorkoutExecutionState(workout, executedWorkout, exercises);
+      _WorkoutExecutionState(workout, executedWorkout, workoutItems);
 }
 
 class _WorkoutExecutionState extends State<WorkoutExecution> {
   Workout workout;
   ExecutedWorkout executedWorkout;
-  List<Exercise> exercises;
-  List<List<bool>> exerciseSetStates = [];
+  List<WorkoutItem> workoutItems;
+  List<List<bool>> workoutItemsetStates = [];
   List<int> completedSets;
 
-  _WorkoutExecutionState(workout, executedWorkout, exercises) {
+  _WorkoutExecutionState(workout, executedWorkout, workoutItems) {
     this.workout = workout;
     this.executedWorkout = executedWorkout;
-    this.exercises = exercises;
-    completedSets = List.generate(exercises.length, (index) => 0);
+    this.workoutItems = workoutItems;
+    completedSets = List.generate(workoutItems.length, (index) => 0);
     populateStates();
   }
 
   void populateStates() {
-    for (int i = 0; i < exercises.length; i++) {
-      Exercise exercise = exercises[i];
+    for (int i = 0; i < workoutItems.length; i++) {
+      WorkoutItem workoutItem = workoutItems[i];
       this
-          .exerciseSetStates
-          .add(List.generate(exercise.sets, (index) => false));
+          .workoutItemsetStates
+          .add(List.generate(WorkoutItem.sets, (index) => false));
     }
   }
 
@@ -60,12 +61,12 @@ class _WorkoutExecutionState extends State<WorkoutExecution> {
                 width: 250,
                 child: ElevatedButton(
                     onPressed: () {
-                      navigateToExerciseExecution(0);
+                      navigateToWorkoutItemExecution(0);
                     },
                     child: Text("Start from beginning")),
               ),
             ),
-            Expanded(child: exerciseCards()),
+            Expanded(child: WorkoutItemCards()),
             Padding(
               padding: const EdgeInsets.only(bottom: 10.0),
               child: Align(
@@ -84,10 +85,10 @@ class _WorkoutExecutionState extends State<WorkoutExecution> {
     setState(() {
       this.completedSets[position]++;
     });
-    for (int i = 0; i < this.exerciseSetStates[position].length; i++) {
-      if (!this.exerciseSetStates[position][i]) {
+    for (int i = 0; i < this.workoutItemsetStates[position].length; i++) {
+      if (!this.workoutItemsetStates[position][i]) {
         setState(() {
-          this.exerciseSetStates[position][i] = true;
+          this.workoutItemsetStates[position][i] = true;
         });
         break;
       }
@@ -95,52 +96,52 @@ class _WorkoutExecutionState extends State<WorkoutExecution> {
     return completedSets[position];
   }
 
-  ListView exerciseCards() {
+  ListView WorkoutItemCards() {
     return ListView.builder(
-      itemCount: exercises.length,
+      itemCount: workoutItems.length,
       itemBuilder: (BuildContext context, int position) {
-        Exercise currentExercise = this.exercises[position];
+        WorkoutItem currentWorkoutItem = this.workoutItems[position];
         return Padding(
           padding: const EdgeInsets.fromLTRB(50.0, 20.0, 50.0, 20.0),
-          child: ExerciseCard(currentExercise, position,
-              exerciseSetStates[position], navigateToExerciseExecution),
+          child: WorkoutItemCard(currentWorkoutItem, position,
+              workoutItemsetStates[position], navigateToWorkoutItemExecution),
         );
       },
     );
   }
 
-  bool isAnotherExercise(int position) {
-    if (position + 1 < exercises.length)
+  bool isAnotherWorkoutItem(int position) {
+    if (position + 1 < workoutItems.length)
       return true;
     else
       return false;
   }
 
-  void navigateToExerciseExecution(int position,
+  void navigateToWorkoutItemExecution(int position,
       [bool clickedCard = false]) async {
-    bool anotherExercise;
+    bool anotherWorkoutItem;
     if (!clickedCard) {
-      anotherExercise = isAnotherExercise(position);
+      anotherWorkoutItem = isAnotherWorkoutItem(position);
       bool result = await Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => ExerciseExecution(
-                  exercises[position],
+                  workoutItems[position],
                   executedWorkout,
                   completedSets[position],
                   position,
-                  anotherExercise,
-                  navigateToExerciseExecution,
+                  anotherWorkoutItem,
+                  navigateToWorkoutItemExecution,
                   completeSet)));
     } else {
       for (int i = 0; i <= position; i++) {
         ExerciseExecution exerciseExecution = ExerciseExecution(
-            exercises[i],
+            workoutItems[i],
             executedWorkout,
             completedSets[i],
             i,
-            isAnotherExercise(i),
-            navigateToExerciseExecution,
+            isAnotherWorkoutItem(i),
+            navigateToWorkoutItemExecution,
             completeSet);
         pushWithoutAnimation(exerciseExecution);
       }
@@ -153,29 +154,30 @@ class _WorkoutExecutionState extends State<WorkoutExecution> {
   }
 }
 
-class ExerciseCard extends StatefulWidget {
-  Exercise exercise;
-  int position; // index of exercise in exercises list
+class WorkoutItemCard extends StatefulWidget {
+  WorkoutItem workoutItem;
+  int position; // index of WorkoutItem in workoutItems list
   List<bool> blockStates;
   Function(int, [bool])
-      navigate; // callback funciton for navigating to the exercise execuiton screen
-  ExerciseCard(this.exercise, this.position, this.blockStates, this.navigate,
+      navigate; // callback funciton for navigating to the WorkoutItem execuiton screen
+  WorkoutItemCard(
+      this.workoutItem, this.position, this.blockStates, this.navigate,
       {Key key})
       : super(key: key);
 
   @override
-  _ExerciseCardState createState() =>
-      _ExerciseCardState(exercise, position, blockStates, navigate);
+  _WorkoutItemCardState createState() =>
+      _WorkoutItemCardState(workoutItem, position, blockStates, navigate);
 }
 
-class _ExerciseCardState extends State<ExerciseCard> {
-  Exercise exercise;
+class _WorkoutItemCardState extends State<WorkoutItemCard> {
+  WorkoutItem workoutItem;
   int position;
   List<bool> blockStates;
   Function(int, [bool]) navigate;
   List<Widget> blocks = [];
-  _ExerciseCardState(
-      this.exercise, this.position, this.blockStates, this.navigate);
+  _WorkoutItemCardState(
+      this.workoutItem, this.position, this.blockStates, this.navigate);
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +188,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
         child: ListTile(
           title: Center(
               child: Text(
-            exercise.name,
+            workoutItem.name,
             style: whiteText,
           )),
           onTap: () {
@@ -194,7 +196,7 @@ class _ExerciseCardState extends State<ExerciseCard> {
           },
         ),
       ),
-      drawProgressBlocks(exercise.sets)
+      drawProgressBlocks(WorkoutItem.sets)
     ]);
   }
 

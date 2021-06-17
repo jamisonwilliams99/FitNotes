@@ -2,7 +2,7 @@ Current testing branch:
 adding_supersets
 
 CURRENTLY WORKING ON:
-    Trying to get ReorderableListView working properly in WorkoutView
+
 
 
 
@@ -26,6 +26,9 @@ FEATURES THAT NEED TO BE IMPLEMENTED:
 
 
 Needs fixed:
+
+- workout execution needs to be modified to accept supersets
+
 - when a workout is deleted:
     - need to delete all exercises and supersets with that workout
     -   - also need to delete all exercises within each superset that is deleted
@@ -44,7 +47,11 @@ Needs fixed:
 
 - changes made to a workout after it has been executed will be applied to saved workout executions
 
+Refactoring:
+- make getData functions more readable
+- - split them up into different functions
 
+- make delete() functions more readable
 
 OPTIMIZATION:
 - optimize input validation in ExerciseExecution
@@ -53,29 +60,8 @@ OPTIMIZATION:
 - - not sure which is more optimal
 
 
-Adding supersets:
-Create a new class SuperSet
-- will contain a list of exercise IDs
-- - these exercises will be included in the superset
-
-Create a generic class WorkoutItem
-- Exercise and SuperSet will implement WorkoutItem
-
-Attributes: 
-  id
-  workoutId
-  orderNum
-
-Need to create dBHelper Methods for SuperSets and SuperSetExercise
-
-Need to modify WorkoutView so that the list of exercises is changed to a list of WorkoutItems (which can be either a superset or a standalone exercise)
-
-Complete AddSuperSet page
-
-need to figure out how to display all of the superset exercises in a single superset card in WorkoutView
 
 
-issues:
-superset exercises are not being recovered properly after created
+
 
 

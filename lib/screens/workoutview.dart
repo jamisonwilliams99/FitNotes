@@ -147,6 +147,7 @@ class _WorkoutViewState extends State<WorkoutView> {
       if (workoutItems[i] is StandAloneExercise) {
         helper.updateStandAloneExercise(workoutItems[i]);
       } else {
+        print("is a superset");
         helper.updateSuperSet(workoutItems[i]);
       }
     }
@@ -188,19 +189,35 @@ class _WorkoutViewState extends State<WorkoutView> {
     List<SuperSetExercise> exercises = this.superSetExercises[superSet.id];
     return Card(
       key: ValueKey(superSet.id),
+      color: myIndigo,
       child: ListView.builder(
           shrinkWrap: true,
           physics: ScrollPhysics(),
           itemCount: exercises.length,
           itemBuilder: (context, index) {
             SuperSetExercise exercise = exercises[index];
-            return ListTile(
-                title: Center(child: Text(exercise.name)),
+
+            Color separatorColor =
+                (index < exercises.length - 1) ? Colors.white : myIndigo;
+
+            return Container(
+              margin: EdgeInsets.only(left: 10.0, right: 10.0),
+              decoration: BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(width: 1.0, color: separatorColor)),
+              ),
+              child: ListTile(
+                title: Center(child: Text(exercise.name, style: whiteText)),
                 subtitle: Center(
                   child: Text(
                       exercise.sets.toString() + "x" + exercise.reps.toString(),
                       style: whiteText),
-                ));
+                ),
+                onTap: () {
+                  navigateToAddSuperSet(superSet);
+                },
+              ),
+            );
           }),
     );
   }
@@ -244,6 +261,12 @@ class _WorkoutViewState extends State<WorkoutView> {
     helper.updateWorkout(workout);
   }
 
+  void deleteSuperSetExercises() {
+    superSetExercises.forEach((id, exercises) {
+      helper.deleteSuperSetExercises(id);
+    });
+  }
+
   void delete() async {
     int result;
     int deletedExercises;
@@ -254,8 +277,8 @@ class _WorkoutViewState extends State<WorkoutView> {
     }
     result = await helper.deleteWorkout(workout.id);
     deletedExercises = await helper.deleteWorkoutExercises(workout.id);
-    deletedSupersets = await helper.deleteWorkoutSuperSets(
-        workout.id); // should also delete all of the superset exercises
+    deletedSupersets = await helper.deleteWorkoutSuperSets(workout.id);
+    deleteSuperSetExercises();
     if (result != 0) {
       AlertDialog alertDialog = AlertDialog(content: Text("Workout deleted"));
       showDialog(context: context, builder: (_) => alertDialog);
@@ -291,6 +314,7 @@ class _WorkoutViewState extends State<WorkoutView> {
           tempExercises
               .add(SuperSetExercise.fromObject(superSetExercisesData[j]));
         }
+        tempExercises.sort((a, b) => a.orderNum.compareTo(b.orderNum));
         superSetMap[superSet.id] = tempExercises;
       });
     } finally {
@@ -305,70 +329,15 @@ class _WorkoutViewState extends State<WorkoutView> {
 
   Future<List> getSuperSetExerciseData() async {}
 
-  // split this into different functions
-  // async calls will likely cause problems
-  // void getData() {
-  //   final dbFuture = helper.initializeDb();
-  //   final List<WorkoutItem> itemsList = <WorkoutItem>[];
-  //   final List<int> superSetIds = <int>[];
-  //   final Map<int, List> superSetMap = Map();
-
-  //   dbFuture.then((result) {
-  //     final exercisesFuture = helper.getStandAloneExercises(workout.id);
-  //     exercisesFuture.then((result) {
-  //       count = result.length;
-  //       for (int i = 0; i < result.length; i++) {
-  //         StandAloneExercise currentExercise =
-  //             StandAloneExercise.fromObject(result[i]);
-  //         itemsList.add(currentExercise);
-  //       }
-
-  //       final superSetsFuture = helper.getSuperSets(workout.id);
-  //       superSetsFuture.then((result) {
-  //         count += result.length;
-  //         for (int i = 0; i < result.length; i++) {
-  //           SuperSet currentSuperSet = SuperSet.fromObject(result[i]);
-  //           superSetIds.add(currentSuperSet.id);
-  //           itemsList.add(currentSuperSet);
-  //         }
-  //         for (int i = 0; i < superSetIds.length; i++) {
-  //           int id = superSetIds[i];
-  //           final superSetExercisesFuture = helper.getSuperSetExercises(id);
-  //           superSetExercisesFuture.then((result) {
-  //             List<SuperSetExercise> exerciseList = <SuperSetExercise>[];
-  //             // for (int j = 0; j < result.length; j++) {
-  //             //   exerciseList.add(SuperSetExercise.fromObject(result[j]));
-  //             // }
-  //             Future.forEach(result, (element) async {
-  //               exerciseList.add(SuperSetExercise.fromObject(element));
-  //             });
-  //             superSetMap[id] = exerciseList;
-  //           });
-  //         }
-
-  //         // Try using future.forEach
-  //       });
-  //     });
-  //     itemsList.sort((a, b) => a.orderNum.compareTo(b.orderNum));
-  //     setState(() {
-  //       this.count = count;
-  //       this.workoutItems = itemsList;
-  //       this.superSetExercises = superSetMap;
-  //     });
-  //   });
-  // }
-
   void navigateToAddSuperSet(SuperSet superSet) async {
     if (superSet.id == null) {
       superSet.id = await helper.insertSuperSet(superSet);
     }
-
     bool result = await Navigator.push(context,
         MaterialPageRoute(builder: (context) => AddSuperSet(superSet)));
     if (result == true) {
       getData();
     }
-    print(superSetExercises.length);
   }
 
   void navigateToAddExercise(Exercise exercise) async {
