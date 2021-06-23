@@ -147,7 +147,6 @@ class _WorkoutViewState extends State<WorkoutView> {
       if (workoutItems[i] is StandAloneExercise) {
         helper.updateStandAloneExercise(workoutItems[i]);
       } else {
-        print("is a superset");
         helper.updateSuperSet(workoutItems[i]);
       }
     }
@@ -171,7 +170,6 @@ class _WorkoutViewState extends State<WorkoutView> {
       padding: EdgeInsets.fromLTRB(50.0, 15, 50.0, 0.0),
       itemCount: count,
       itemBuilder: (BuildContext context, int position) {
-        print(workoutItems);
         WorkoutItem workoutItem = this.workoutItems[position];
         if (workoutItem is StandAloneExercise) {
           return exerciseCard(workoutItem);
@@ -353,7 +351,7 @@ class _WorkoutViewState extends State<WorkoutView> {
     bool result = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                WorkoutExecution(workout, executedWorkout, workoutItems)));
+            builder: (context) => WorkoutExecution(
+                workout, executedWorkout, workoutItems, superSetExercises)));
   }
 }

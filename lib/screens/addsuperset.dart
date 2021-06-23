@@ -204,6 +204,8 @@ class _AddSuperSetState extends State<AddSuperSet> {
     SuperSetExercise exercise = SuperSetExercise.withSuperSetId(
         superSet.id, name, reps, sets, exercises.length + 1);
 
+    superSet.sets = sets;
+    helper.updateSuperSet(superSet);
     helper.insertSuperSetExercise(exercise);
     getData();
   }

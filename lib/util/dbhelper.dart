@@ -71,7 +71,7 @@ class DbHelper {
 
     // create superset table
     await db.execute(
-        "CREATE TABLE $tblSuperSet($colSuperSetId INTEGER PRIMARY KEY,  $colOrderNum INTEGER, $colWorkoutId INTEGER, FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
+        "CREATE TABLE $tblSuperSet($colSuperSetId INTEGER PRIMARY KEY, $colSets INTEGER,  $colOrderNum INTEGER, $colWorkoutId INTEGER, FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
 
     // create stand alone exercise table
     await db.execute(

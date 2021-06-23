@@ -2,7 +2,7 @@ Current testing branch:
 adding_supersets
 
 CURRENTLY WORKING ON:
-
+- add functionality to record the superset exercises in superSetExecution
 
 
 
@@ -28,6 +28,10 @@ FEATURES THAT NEED TO BE IMPLEMENTED:
 Needs fixed:
 
 - workout execution needs to be modified to accept supersets
+- - exercise and superset execution will be different widgets that inherit from WorkoutItemExecution
+- - either that or completely different widgets which redefine the same methods (not ideal)
+
+-workout/set execution needs to be modified to accept supersets (needs to take WorkoutItem instead of Exercise)
 
 - when a workout is deleted:
     - need to delete all exercises and supersets with that workout

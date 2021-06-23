@@ -13,7 +13,7 @@ import 'package:workout_tracking_app/util/noanimationpageroute.dart';
 import 'package:workout_tracking_app/styles/styles.dart';
 
 class ExerciseExecution extends StatefulWidget {
-  Exercise exercise;
+  StandAloneExercise exercise;
   ExecutedWorkout executedWorkout;
   int numCompletedSets;
   int position;
@@ -38,7 +38,7 @@ class ExerciseExecution extends StatefulWidget {
 }
 
 class _ExerciseExecutionState extends State<ExerciseExecution> {
-  Exercise exercise;
+  StandAloneExercise exercise;
   ExecutedWorkout executedWorkout;
   int numCompletedSets;
   int position;
