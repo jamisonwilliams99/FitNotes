@@ -48,7 +48,7 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
   Function(int) navigate;
   Function(void) completeSet;
 
-  List<ExecutedSet> executedSets;
+  List<ExecutedStandAloneExerciseSet> executedSets;
   int count = 0;
   String repsErrorText;
   String weightErrorText;
@@ -70,7 +70,7 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
   @override
   Widget build(BuildContext context) {
     if (executedSets == null) {
-      executedSets = <ExecutedSet>[];
+      executedSets = <ExecutedStandAloneExerciseSet>[];
       getData();
     }
     return Scaffold(
@@ -212,8 +212,9 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
   void completeSetWrapper() {
     double weight = double.parse(weightController.text);
     int reps = int.parse(repsController.text);
-    ExecutedSet executedSet = ExecutedSet.withExternalId(
-        exercise.id, executedWorkout.id, exercise.name, weight, reps);
+    ExecutedStandAloneExerciseSet executedSet =
+        ExecutedStandAloneExerciseSet.withExternalId(
+            exercise.id, executedWorkout.id, exercise.name, weight, reps);
     helper.insertExecutedSet(executedSet);
     setState(() {
       numCompletedSets = completeSet(position);
@@ -228,10 +229,12 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
       final executedSetsFuture =
           helper.getExecutedSets(executedWorkout.id, exercise.id);
       executedSetsFuture.then((result) {
-        List<ExecutedSet> setList = <ExecutedSet>[];
+        List<ExecutedStandAloneExerciseSet> setList =
+            <ExecutedStandAloneExerciseSet>[];
         count = result.length;
         for (int i = 0; i < count; i++) {
-          ExecutedSet executedSet = ExecutedSet.fromObject(result[i]);
+          ExecutedStandAloneExerciseSet executedSet =
+              ExecutedStandAloneExerciseSet.fromObject(result[i]);
           setList.add(executedSet);
         }
         setState(() {

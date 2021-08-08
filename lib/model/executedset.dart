@@ -19,20 +19,27 @@ Class attributes:
 class ExecutedSet {
   int _id;
   int _exerciseId;
-  int _executedWorkoutId;
   String _name;
   double _weight;
   int _reps;
 
   ExecutedSet(this._name, this._weight, this._reps);
 
-  ExecutedSet.withExternalId(this._exerciseId, this._executedWorkoutId,
-      this._name, this._weight, this._reps);
+  ExecutedSet.withExternalId(
+      this._exerciseId, this._name, this._weight, this._reps);
+
+  // need to remove executedWorkoutId after it is implemented in the child class
+  ExecutedSet.fromObject(dynamic o) {
+    this._id = o["setId"];
+    this._exerciseId = o["exerciseId"];
+    this._name = o["name"];
+    this._weight = o["weight"];
+    this._reps = o["reps"];
+  }
 
   // getters
   get id => _id;
   get exerciseId => _exerciseId;
-  get executedWorkoutId => _executedWorkoutId;
   get name => _name;
   get weight => _weight;
   get reps => _reps;
@@ -40,10 +47,6 @@ class ExecutedSet {
   // setters
   set exerciseId(int newExerciseId) {
     _exerciseId = newExerciseId;
-  }
-
-  set executedWorkoutId(int newExecutedWorkoutId) {
-    _executedWorkoutId = newExecutedWorkoutId;
   }
 
   set name(String newName) {
@@ -61,7 +64,6 @@ class ExecutedSet {
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
     map["exerciseId"] = _exerciseId;
-    map["executedWorkoutId"] = _executedWorkoutId;
     map["name"] = _name;
     map["weight"] = _weight;
     map["reps"] = _reps;
@@ -71,13 +73,30 @@ class ExecutedSet {
     }
     return map;
   }
+}
 
-  ExecutedSet.fromObject(dynamic o) {
-    this._id = o["setId"];
-    this._exerciseId = o["exerciseId"];
+class ExecutedStandAloneExerciseSet extends ExecutedSet {
+  int _executedWorkoutId;
+
+  ExecutedStandAloneExerciseSet(name, weight, reps) : super(name, weight, reps);
+
+  ExecutedStandAloneExerciseSet.withExternalId(
+      this._executedWorkoutId, exerciseId, name, weight, reps)
+      : super.withExternalId(exerciseId, name, weight, reps);
+
+  ExecutedStandAloneExerciseSet.fromObject(dynamic o) : super.fromObject(o) {
     this._executedWorkoutId = o["executedWorkoutId"];
-    this._name = o["name"];
-    this._weight = o["weight"];
-    this._reps = o["reps"];
+  }
+
+  int get executedWorkoutId => _executedWorkoutId;
+
+  set executedWorkoutId(int newExecutedWorkoutId) {
+    _executedWorkoutId = newExecutedWorkoutId;
+  }
+
+  Map<String, dynamic> toMap() {
+    var map = super.toMap();
+    map["executedWorkoutId"] = _executedWorkoutId;
+    return map;
   }
 }

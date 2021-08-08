@@ -173,7 +173,7 @@ class _WorkoutExecutionState extends State<WorkoutExecution> {
     } else {
       for (int i = 0; i <= position; i++) {
         if (workoutItems[i] is StandAloneExercise) {
-          ExerciseExecution execution = ExerciseExecution(
+          execution = ExerciseExecution(
               workoutItems[i],
               executedWorkout,
               completedSets[i],
@@ -182,7 +182,7 @@ class _WorkoutExecutionState extends State<WorkoutExecution> {
               navigateToWorkoutItemExecution,
               completeSet);
         } else {
-          SuperSetExecution execution = SuperSetExecution(
+          execution = SuperSetExecution(
               workoutItems[i],
               executedWorkout,
               completedSets[i],
@@ -191,7 +191,6 @@ class _WorkoutExecutionState extends State<WorkoutExecution> {
               navigateToWorkoutItemExecution,
               completeSet);
         }
-
         pushWithoutAnimation(execution);
       }
     }
@@ -268,6 +267,7 @@ class _WorkoutItemCardState extends State<WorkoutItemCard> {
           style: whiteText,
         )),
         onTap: () {
+          print(position);
           navigate(position, true);
         },
       ),

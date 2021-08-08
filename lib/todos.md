@@ -3,6 +3,7 @@ adding_supersets
 
 CURRENTLY WORKING ON:
 - add functionality to record the superset exercises in superSetExecution
+- - will need to modify ExecutedSet to accept SuperSets
 
 
 
@@ -66,6 +67,9 @@ OPTIMIZATION:
 
 
 
-
+ - Create a ExecutedSuperSet class
+ - Add a table for ExecutedSuperSet to DbHelper
+ - Add an an additional column to ExecutedSet for ExecutedSuperSet id
+ - - if the ExecutedSet is not included in a super set, this column will be set to -1
 
 

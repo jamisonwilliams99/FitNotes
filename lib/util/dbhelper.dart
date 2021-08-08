@@ -35,12 +35,15 @@ class DbHelper {
   String colExWorkoutId = "executedWorkoutId";
   String colDate = "date";
 
-  // Executed Set table
-  String tblSets = "sets";
+  // Executed Stand Alone Exercise Set table
+  String tblExecutedStandAloneExerciseSet = "standAloneExerciseSet";
   String colSetId = "setId";
   String colExerciseId = "exerciseId";
   String colWeight = "weight";
   String colExReps = "reps"; // watch this
+
+  // Executed Super Set Exercise Set table NOTE: uses colSetId, colExerciseId, colWeight, colExReps
+  String tblExecutedSuperSetExerciseSet = "superSetExerciseSet";
 
   DbHelper._internal();
 
@@ -93,10 +96,17 @@ class DbHelper {
 
     // create executed sets table
     // this will need to be fixed later
-    await db.execute("CREATE TABLE $tblSets($colSetId INTEGER PRIMARY KEY, " +
-        "$colWeight REAL, $colExReps INTEGER, $colName TEXT, $colExWorkoutId INTEGER, $colExerciseId INTEGER, " +
-        "FOREIGN KEY($colExWorkoutId) REFERENCES $tblExecutedWorkout($colExWorkoutId), " +
-        "FOREIGN KEY($colExerciseId) REFERENCES $tblStandAloneExercise($colId))");
+    await db.execute(
+        "CREATE TABLE $tblExecutedStandAloneExerciseSet($colSetId INTEGER PRIMARY KEY, " +
+            "$colWeight REAL, $colExReps INTEGER, $colName TEXT, $colExWorkoutId INTEGER, $colExerciseId INTEGER, " +
+            "FOREIGN KEY($colExWorkoutId) REFERENCES $tblExecutedWorkout($colExWorkoutId), " +
+            "FOREIGN KEY($colExerciseId) REFERENCES $tblStandAloneExercise($colId))");
+
+    await db.execute(
+        "CREATE TABLE $tblExecutedSuperSetExerciseSet($colSetId INTEGER PRIMARY KEY, " +
+            "$colWeight REAL, $colExReps INTEGER, $colName TEXT, $colExWorkoutId INTEGER, $colExerciseId INTEGER, " +
+            "FOREIGN KEY($colExWorkoutId) REFERENCES $tblExecutedWorkout($colExWorkoutId), " +
+            "FOREIGN KEY($colExerciseId) REFERENCES $tblStandAloneExercise($colId))");
   }
 
   // *** WORKOUT TABLE METHODS ***
@@ -276,9 +286,14 @@ class DbHelper {
   }
   // *** END EXERCISE TABLE METHODS ***
 
-  // *** SET TABLE METHODS ***
+  // *** SET TABLE METHODS ***  TODO: these all need to be modified to accept StandAloneExerciseSet and SuperSetExerciseSet
   Future<int> insertExecutedSet(ExecutedSet executedSet) async {
     Database db = await this.db;
+
+    String tblSets = (executedSet is ExecutedStandAloneExerciseSet)
+        ? tblExecutedStandAloneExerciseSet
+        : tblExecutedSuperSetExerciseSet;
+
     var result = await db.insert(tblSets, executedSet.toMap());
     return result;
   }
@@ -287,14 +302,15 @@ class DbHelper {
   Future<List> getExecutedSets(int executedWorkoutId, int exerciseId) async {
     Database db = await this.db;
     var result = db.rawQuery(
-        "SELECT * FROM $tblSets WHERE $colExWorkoutId = $executedWorkoutId AND $colExerciseId = $exerciseId");
+        "SELECT * FROM $tblExecutedStandAloneExerciseSet WHERE $colExWorkoutId = $executedWorkoutId AND $colExerciseId = $exerciseId");
     return result;
   }
 
   Future deleteExecutedSet(int id) async {
     int result;
     var db = await this.db;
-    result = await db.rawDelete("DELETE FROM $tblSets WHERE $colSetId = $id");
+    result = await db.rawDelete(
+        "DELETE FROM $tblExecutedStandAloneExerciseSet WHERE $colSetId = $id");
     return result;
   }
   // *** END SET TABLE METHODS ***
