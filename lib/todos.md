@@ -5,6 +5,9 @@ CURRENTLY WORKING ON:
 - add functionality to record the superset exercises in superSetExecution
 - - will need to modify ExecutedSet to accept SuperSets
 
+Current issue:
+The exucuted set info is not properly being saved/loaded to and from db
+
 
 
 FEATURES THAT NEED TO BE IMPLEMENTED:

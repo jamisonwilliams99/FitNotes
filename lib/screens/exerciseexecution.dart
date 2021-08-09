@@ -214,7 +214,7 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
     int reps = int.parse(repsController.text);
     ExecutedStandAloneExerciseSet executedSet =
         ExecutedStandAloneExerciseSet.withExternalId(
-            exercise.id, executedWorkout.id, exercise.name, weight, reps);
+            executedWorkout.id, exercise.id, exercise.name, weight, reps);
     helper.insertExecutedSet(executedSet);
     setState(() {
       numCompletedSets = completeSet(position);
