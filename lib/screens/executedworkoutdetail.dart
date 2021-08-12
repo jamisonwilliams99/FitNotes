@@ -33,7 +33,7 @@ class _ExecutedWorkoutDetailState extends State<ExecutedWorkoutDetail> {
   @override
   Widget build(BuildContext context) {
     if (exercises == null) {
-      getData();
+      // getData();
     }
     return Scaffold(
       appBar: CustomAppBar(executedWorkout.title),
@@ -64,39 +64,39 @@ class _ExecutedWorkoutDetailState extends State<ExecutedWorkoutDetail> {
     );
   }
 
-  void getData() {
-    final dbFuture = helper.initializeDb();
+  // void getData() {
+  //   final dbFuture = helper.initializeDb();
 
-    dbFuture.then((result) {
-      final exercisesFuture =
-          helper.getStandAloneExercises(executedWorkout.workoutId);
-      exercisesFuture.then((result) {
-        List<Exercise> exerciseList = <Exercise>[];
-        count = result.length;
-        for (int i = 0; i < result.length; i++) {
-          Exercise exercise = Exercise.fromObject(result[i]);
-          exercise.executedSets = getSets(exercise.id, executedWorkout.id);
-          exerciseList.add(exercise);
-        }
-        exerciseList.sort((a, b) => a.orderNum.compareTo(b.orderNum));
-        setState(() {
-          exercises = exerciseList;
-          count = count;
-        });
-      });
-    });
-  }
+  //   dbFuture.then((result) {
+  //     final exercisesFuture =
+  //         helper.getStandAloneExercises(executedWorkout.workoutId);
+  //     exercisesFuture.then((result) {
+  //       List<Exercise> exerciseList = <Exercise>[];
+  //       count = result.length;
+  //       for (int i = 0; i < result.length; i++) {
+  //         Exercise exercise = Exercise.fromObject(result[i]);
+  //         exercise.executedSets = getSets(exercise.id, executedWorkout.id);
+  //         exerciseList.add(exercise);
+  //       }
+  //       exerciseList.sort((a, b) => a.orderNum.compareTo(b.orderNum));
+  //       setState(() {
+  //         exercises = exerciseList;
+  //         count = count;
+  //       });
+  //     });
+  //   });
+  // }
 
-  List<ExecutedSet> getSets(int exerciseId, int executedWorkoutId) {
-    final setsFuture = helper.getExecutedSets(executedWorkoutId, exerciseId);
-    List<ExecutedSet> setsList = <ExecutedSet>[];
-    setsFuture.then((result) {
-      for (int i = 0; i < result.length; i++) {
-        setsList.add(ExecutedSet.fromObject(result[i]));
-      }
-    });
-    return setsList;
-  }
+  // List<ExecutedSet> getSets(int exerciseId, int executedWorkoutId) {
+  //   final setsFuture = helper.getExecutedSets(executedWorkoutId, exerciseId);
+  //   List<ExecutedSet> setsList = <ExecutedSet>[];
+  //   setsFuture.then((result) {
+  //     for (int i = 0; i < result.length; i++) {
+  //       setsList.add(ExecutedSet.fromObject(result[i]));
+  //     }
+  //   });
+  //   return setsList;
+  // }
 
   void navigateToExecutedExerciseDetail(position) async {
     Exercise exercise = exercises[position];

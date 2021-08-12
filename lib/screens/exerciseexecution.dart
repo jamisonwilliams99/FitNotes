@@ -170,7 +170,6 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
     );
   }
 
-  // don't like this, please change
   bool isValidSet() {
     return validReps &&
         validWeight &&
@@ -226,8 +225,8 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
     final dbFuture = helper.initializeDb();
 
     dbFuture.then((result) {
-      final executedSetsFuture =
-          helper.getExecutedSets(executedWorkout.id, exercise.id);
+      final executedSetsFuture = helper.getExecutedStandAloneExerciseSets(
+          executedWorkout.id, exercise.id);
       executedSetsFuture.then((result) {
         List<ExecutedStandAloneExerciseSet> setList =
             <ExecutedStandAloneExerciseSet>[];

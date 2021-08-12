@@ -35,6 +35,10 @@ class DbHelper {
   String colExWorkoutId = "executedWorkoutId";
   String colDate = "date";
 
+  //Executed Superset table
+  String tblExecutedSuperSet = "executedSuperSet";
+  String colExSuperSetId = "executedSuperSetId";
+
   // Executed Stand Alone Exercise Set table
   String tblExecutedStandAloneExerciseSet = "standAloneExerciseSet";
   String colSetId = "setId";
@@ -94,6 +98,13 @@ class DbHelper {
             "$colDate TEXT, $colWorkoutTitle TEXT, $colWorkoutId INTEGER, " +
             "FOREIGN KEY($colWorkoutId) REFERENCES $tblWorkout($colWorkoutId))");
 
+    // create executed superset table
+    await db.execute(
+        "CREATE TABLE $tblExecutedSuperSet($colSetId INTEGER PRIMARY KEY, " +
+            "$colSuperSetId INTEGER, $colExWorkoutId INTEGER, " +
+            "FOREIGN KEY($colSuperSetId) REFERENCES $tblSuperSet($colSuperSetId), " +
+            "FOREIGN KEY($colExWorkoutId) REFERENCES $tblExecutedWorkout($colExWorkoutId))");
+
     // create executed sets table
     // this will need to be fixed later
     await db.execute(
@@ -104,8 +115,8 @@ class DbHelper {
 
     await db.execute(
         "CREATE TABLE $tblExecutedSuperSetExerciseSet($colSetId INTEGER PRIMARY KEY, " +
-            "$colWeight REAL, $colExReps INTEGER, $colName TEXT, $colExWorkoutId INTEGER, $colExerciseId INTEGER, " +
-            "FOREIGN KEY($colExWorkoutId) REFERENCES $tblExecutedWorkout($colExWorkoutId), " +
+            "$colWeight REAL, $colExReps INTEGER, $colName TEXT, $colExSuperSetId INTEGER, $colExerciseId INTEGER, " +
+            "FOREIGN KEY($colExSuperSetId) REFERENCES $tblExecutedSuperSet($colSetId), " +
             "FOREIGN KEY($colExerciseId) REFERENCES $tblStandAloneExercise($colId))");
   }
 
@@ -286,23 +297,47 @@ class DbHelper {
   }
   // *** END EXERCISE TABLE METHODS ***
 
-  // *** SET TABLE METHODS ***  TODO: these all need to be modified to accept StandAloneExerciseSet and SuperSetExerciseSet
+  // *** SET TABLE METHODS ***
+
+  // TODO: NEED TO MODIFY ALL SET METHODS SO THAT THEY ACCEPT DIFFERENT CHILD CLASSES OF ExecutedSet
   Future<int> insertExecutedSet(ExecutedSet executedSet) async {
     Database db = await this.db;
 
-    String tblSets = (executedSet is ExecutedStandAloneExerciseSet)
-        ? tblExecutedStandAloneExerciseSet
-        : tblExecutedSuperSetExerciseSet;
+    String tblSets;
+
+    if (executedSet is ExecutedStandAloneExerciseSet) {
+      tblSets = tblExecutedStandAloneExerciseSet;
+    } else if (executedSet is ExecutedSuperSetExerciseSet) {
+      tblSets = tblExecutedSuperSetExerciseSet;
+    } else if (executedSet is ExecutedSuperSet) {
+      tblSets = tblExecutedSuperSet;
+    }
 
     var result = await db.insert(tblSets, executedSet.toMap());
     return result;
   }
 
   // gets all sets in the database that are a part of a specific executed workout and for a specific exercise
-  Future<List> getExecutedSets(int executedWorkoutId, int exerciseId) async {
+  Future<List> getExecutedStandAloneExerciseSets(
+      int executedWorkoutId, int exerciseId) async {
     Database db = await this.db;
     var result = db.rawQuery(
         "SELECT * FROM $tblExecutedStandAloneExerciseSet WHERE $colExWorkoutId = $executedWorkoutId AND $colExerciseId = $exerciseId");
+    return result;
+  }
+
+  Future<List> getExecutedSuperSetExerciseSets(int executedSuperSetId) async {
+    Database db = await this.db;
+    var result = db.rawQuery(
+        "SELECT * FROM $tblExecutedSuperSetExerciseSet WHERE $colExSuperSetId = $executedSuperSetId");
+    return result;
+  }
+
+  Future<List> getExecutedSuperSets(
+      int executedWorkoutId, int superSetId) async {
+    Database db = await this.db;
+    var result = db.rawQuery(
+        "SELECT * FROM $tblExecutedSuperSet WHERE $colExWorkoutId = $executedWorkoutId AND $colSuperSetId = $superSetId");
     return result;
   }
 
@@ -312,6 +347,10 @@ class DbHelper {
     result = await db.rawDelete(
         "DELETE FROM $tblExecutedStandAloneExerciseSet WHERE $colSetId = $id");
     return result;
+  }
+
+  Future<int> getLatestExecutedSuperSetId() async {
+    Database db = await this.db;
   }
   // *** END SET TABLE METHODS ***
 

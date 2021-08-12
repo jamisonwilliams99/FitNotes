@@ -36,14 +36,14 @@ class _ExecutedExerciseDetailState extends State<ExecutedExerciseDetail> {
             side: BorderSide(color: myIndigo, width: 2.0),
             borderRadius: BorderRadius.circular(10.0),
           ),
-          child: ListTile(
-            title: Text("Set " + (position + 1).toString()),
-            subtitle: Text("Reps: " +
-                exercise.executedSets[position].reps.toString() +
-                "   Weight: " +
-                exercise.executedSets[position].weight.toString() +
-                " lbs"),
-          ),
+          // child: ListTile(
+          //   title: Text("Set " + (position + 1).toString()),
+          //   subtitle: Text("Reps: " +
+          //       exercise.executedSets[position].reps.toString() +
+          //       "   Weight: " +
+          //       exercise.executedSets[position].weight.toString() +
+          //       " lbs"),
+          // ),
         );
       },
     );

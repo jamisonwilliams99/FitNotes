@@ -18,33 +18,85 @@ Class attributes:
 
 class ExecutedSet {
   int _id;
+
+  ExecutedSet();
+
+  ExecutedSet.fromObject(dynamic o) {
+    this._id = o["setId"];
+  }
+
+  // getters
+  get id => _id;
+
+  set id(int newId) {
+    _id = newId;
+  }
+
+  Map<String, dynamic> toMap() {
+    var map = Map<String, dynamic>();
+
+    if (_id != null) {
+      map["setId"] = _id;
+    }
+
+    return map;
+  }
+}
+
+class ExecutedSuperSet extends ExecutedSet {
+  int _superSetId;
+  int _executedWorkoutId;
+
+  ExecutedSuperSet.withExternalId(this._superSetId, this._executedWorkoutId);
+
+  ExecutedSuperSet.fromObject(dynamic o) : super.fromObject(o) {
+    this._superSetId = o["superSetId"];
+    this._executedWorkoutId = o["executedWorkoutId"];
+  }
+
+  get superSetId => _superSetId;
+  get executedWorkoutId => _executedWorkoutId;
+
+  set superSetId(int newSuperSetId) {
+    _superSetId = newSuperSetId;
+  }
+
+  set executedWorkoutId(int newExecutedWorkoutId) {
+    _executedWorkoutId = newExecutedWorkoutId;
+  }
+
+  Map<String, dynamic> toMap() {
+    var map = super.toMap();
+    map["superSetId"] = _superSetId;
+    map["executedWorkoutId"] = _executedWorkoutId;
+
+    return map;
+  }
+}
+
+class ExecutedExerciseSet extends ExecutedSet {
   int _exerciseId;
   String _name;
   double _weight;
   int _reps;
 
-  ExecutedSet(this._name, this._weight, this._reps);
+  ExecutedExerciseSet(this._name, this._weight, this._reps);
 
-  ExecutedSet.withExternalId(
+  ExecutedExerciseSet.withExternalId(
       this._exerciseId, this._name, this._weight, this._reps);
 
-  // need to remove executedWorkoutId after it is implemented in the child class
-  ExecutedSet.fromObject(dynamic o) {
-    this._id = o["setId"];
+  ExecutedExerciseSet.fromObject(dynamic o) : super.fromObject(o) {
     this._exerciseId = o["exerciseId"];
     this._name = o["name"];
     this._weight = o["weight"];
     this._reps = o["reps"];
   }
 
-  // getters
-  get id => _id;
   get exerciseId => _exerciseId;
   get name => _name;
   get weight => _weight;
   get reps => _reps;
 
-  // setters
   set exerciseId(int newExerciseId) {
     _exerciseId = newExerciseId;
   }
@@ -62,20 +114,17 @@ class ExecutedSet {
   }
 
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
+    var map = super.toMap();
     map["exerciseId"] = _exerciseId;
     map["name"] = _name;
     map["weight"] = _weight;
     map["reps"] = _reps;
 
-    if (_id != null) {
-      map["setId"] = _id;
-    }
     return map;
   }
 }
 
-class ExecutedStandAloneExerciseSet extends ExecutedSet {
+class ExecutedStandAloneExerciseSet extends ExecutedExerciseSet {
   int _executedWorkoutId;
 
   ExecutedStandAloneExerciseSet(name, weight, reps) : super(name, weight, reps);
@@ -97,6 +146,32 @@ class ExecutedStandAloneExerciseSet extends ExecutedSet {
   Map<String, dynamic> toMap() {
     var map = super.toMap();
     map["executedWorkoutId"] = _executedWorkoutId;
+    return map;
+  }
+}
+
+class ExecutedSuperSetExerciseSet extends ExecutedExerciseSet {
+  int _executedSuperSetId;
+
+  ExecutedSuperSetExerciseSet(name, weight, reps) : super(name, weight, reps);
+
+  ExecutedSuperSetExerciseSet.withExternalId(
+      this._executedSuperSetId, exerciseId, name, weight, reps)
+      : super.withExternalId(exerciseId, name, weight, reps);
+
+  ExecutedSuperSetExerciseSet.fromObject(dynamic o) : super.fromObject(o) {
+    this._executedSuperSetId = o["executedSuperSetId"];
+  }
+
+  int get executedSuperSetId => _executedSuperSetId;
+
+  set executedSuperSetId(int newExecutedSuperSetId) {
+    _executedSuperSetId = newExecutedSuperSetId;
+  }
+
+  Map<String, dynamic> toMap() {
+    var map = super.toMap();
+    map["executedSuperSetId"] = _executedSuperSetId;
     return map;
   }
 }

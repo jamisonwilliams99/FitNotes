@@ -45,7 +45,8 @@ class _SuperSetExecutionState extends State<SuperSetExecution> {
   Function(void) completeSet;
 
   List<SuperSetExercise> exercises;
-  List<ExecutedSet> executedSets;
+  List<ExecutedSuperSet> executedSuperSets = <ExecutedSuperSet>[];
+  Map<int, List> executedSuperSetExerciseSets = Map();
   int count = 0;
   int indexOfCurrentExercise = 0;
   String repsErrorText;
@@ -65,11 +66,14 @@ class _SuperSetExecutionState extends State<SuperSetExecution> {
   TextEditingController repsController = TextEditingController();
   TextEditingController weightController = TextEditingController();
 
+  ExecutedSuperSet currentExecutedSuperSet;
+
   @override
   Widget build(BuildContext context) {
     if (exercises == null) {
       exercises = <SuperSetExercise>[];
-      getData();
+      getExerciseData();
+      getExecutedSetData();
     }
     return Scaffold(
         appBar: AppBar(
@@ -136,20 +140,105 @@ class _SuperSetExecutionState extends State<SuperSetExecution> {
               ],
             ),
             ElevatedButton(
+                // make this a function (should be called in the completeSetWrapper() function)
                 onPressed: () {
-                  if (indexOfCurrentExercise < exercises.length - 1) {
-                    setState(() {
-                      indexOfCurrentExercise++;
-                    });
-                  } else {
-                    setState(() {
-                      indexOfCurrentExercise = 0;
-                    });
-                  }
+                  completeSetWrapper();
                 },
                 child: Text("Complete Set")),
+            Expanded(child: superSetList())
           ],
         ));
+  }
+
+  ListView superSetList() {
+    return ListView.builder(
+        itemCount: executedSuperSets.length,
+        itemBuilder: (BuildContext context, int position) {
+          int superSetId = executedSuperSets[position].id;
+          return Card(
+            shape: RoundedRectangleBorder(
+              side: BorderSide(color: myIndigo, width: 2.0),
+              borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Column(
+              children: [
+                Center(child: Text("Set " + (position + 1).toString())),
+                exerciseSetList(superSetId),
+              ],
+            ),
+          );
+        });
+  }
+
+  // implement this the same way as superSetCard in exerciseexecution
+  ListView exerciseSetList(int superSetId) {
+    List<ExecutedSuperSetExerciseSet> exerciseSets =
+        executedSuperSetExerciseSets[superSetId];
+    // print(executedSuperSetExerciseSets);
+    // print(executedSuperSets);
+    return ListView.builder(
+      scrollDirection: Axis.vertical,
+      shrinkWrap: true,
+      itemCount: exerciseSets.length,
+      itemBuilder: (context, index) {
+        ExecutedSuperSetExerciseSet executedSet = exerciseSets[index];
+        Color separatorColor =
+            (index < exerciseSets.length - 1) ? myIndigo : Colors.white;
+        return Container(
+          margin: EdgeInsets.only(left: 10.0, right: 10.0),
+          decoration: BoxDecoration(
+            border:
+                Border(bottom: BorderSide(width: 1.0, color: separatorColor)),
+          ),
+          child: ListTile(
+            title: Text(executedSet.name),
+            subtitle: Text("Reps: " +
+                executedSet.reps.toString() +
+                "   Weight: " +
+                executedSet.weight.toString() +
+                " lbs"),
+          ),
+        );
+      },
+    );
+  }
+
+  void completeSetWrapper() async {
+    double weight = double.parse(weightController.text);
+    int reps = int.parse(repsController.text);
+    ExecutedSuperSetExerciseSet executedSet;
+
+    if (indexOfCurrentExercise < exercises.length - 1) {
+      if (indexOfCurrentExercise == 0) {
+        // we are creating a new ExecutedSet Object
+        // all executed exercise info will point to this executedSuperSet
+        // until the index reaches 0 again, in which case a new executedSuperSet will be created
+        currentExecutedSuperSet =
+            ExecutedSuperSet.withExternalId(superSet.id, executedWorkout.id);
+
+        // need to insert executedSuperSet to database but first need to modify database method to accept this object
+        currentExecutedSuperSet.id =
+            await helper.insertExecutedSet(currentExecutedSuperSet);
+      }
+      SuperSetExercise exercise = exercises[indexOfCurrentExercise];
+      executedSet = ExecutedSuperSetExerciseSet.withExternalId(
+          currentExecutedSuperSet.id, exercise.id, exercise.name, weight, reps);
+
+      setState(() {
+        indexOfCurrentExercise++;
+      });
+    } else {
+      SuperSetExercise exercise = exercises[indexOfCurrentExercise];
+      executedSet = ExecutedSuperSetExerciseSet.withExternalId(
+          currentExecutedSuperSet.id, exercise.id, exercise.name, weight, reps);
+
+      setState(() {
+        indexOfCurrentExercise = 0;
+        numCompletedSets = completeSet(position);
+      });
+    }
+    await helper.insertExecutedSet(executedSet);
+    getExecutedSetData();
   }
 
   List<Widget> generateExerciseWidgets() {
@@ -213,7 +302,7 @@ class _SuperSetExecutionState extends State<SuperSetExecution> {
   }
 
   // Todo: implement
-  void getData() async {
+  void getExerciseData() async {
     final db = await helper.initializeDb();
     final exercisesData = await helper.getSuperSetExercises(superSet.id);
 
@@ -226,6 +315,39 @@ class _SuperSetExecutionState extends State<SuperSetExecution> {
 
     setState(() {
       exercises = exerciseList;
+    });
+  }
+
+  void getExecutedSetData() async {
+    final db = await helper.initializeDb();
+    final executedSuperSetsData =
+        await helper.getExecutedSuperSets(executedWorkout.id, superSet.id);
+
+    List<ExecutedSuperSet> executedSuperSetList = <ExecutedSuperSet>[];
+    final Map<int, List> executedSuperSetMap = Map();
+
+    await Future.forEach(executedSuperSetsData, (data) async {
+      ExecutedSuperSet executedSuperSet = ExecutedSuperSet.fromObject(data);
+      List<ExecutedSuperSetExerciseSet> tempSets =
+          <ExecutedSuperSetExerciseSet>[];
+
+      executedSuperSetList.add(executedSuperSet);
+
+      var exerciseSetData =
+          await helper.getExecutedSuperSetExerciseSets(executedSuperSet.id);
+
+      for (int i = 0; i < exerciseSetData.length; i++) {
+        ExecutedSuperSetExerciseSet tempSet =
+            ExecutedSuperSetExerciseSet.fromObject(exerciseSetData[i]);
+
+        tempSets.add(tempSet);
+      }
+      executedSuperSetMap[executedSuperSet.id] = tempSets;
+    });
+
+    setState(() {
+      executedSuperSets = executedSuperSetList;
+      executedSuperSetExerciseSets = executedSuperSetMap;
     });
   }
 

@@ -2,11 +2,17 @@ Current testing branch:
 adding_supersets
 
 CURRENTLY WORKING ON:
+
+add a listview to display the executed super set data
+
 - add functionality to record the superset exercises in superSetExecution
 - - will need to modify ExecutedSet to accept SuperSets
+- - I just finished modifying the inheritance hierchy of ExecutedSet
+- - Now I need to modify the Workout/Exercise Execution screens to accept the different objects correctly
+- - first need to modify database methods to accept the different objects
 
 Current issue:
-The exucuted set info is not properly being saved/loaded to and from db
+
 
 
 
@@ -61,6 +67,10 @@ Refactoring:
 
 - make delete() functions more readable
 
+
+
+
+
 OPTIMIZATION:
 - optimize input validation in ExerciseExecution
 - dispose of controllers to prevent memory leaks
@@ -68,11 +78,5 @@ OPTIMIZATION:
 - - not sure which is more optimal
 
 
-
-
- - Create a ExecutedSuperSet class
- - Add a table for ExecutedSuperSet to DbHelper
- - Add an an additional column to ExecutedSet for ExecutedSuperSet id
- - - if the ExecutedSet is not included in a super set, this column will be set to -1
 
 
