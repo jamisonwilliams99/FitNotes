@@ -89,13 +89,22 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
                 },
                 child: Icon(
                   Icons.arrow_forward,
-                  //10color: anotherExercise ? Colors.white : Colors.transparent,
                 )),
           )
         ],
       ),
       body: Column(
         children: [
+          Center(
+              child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Container(
+              child: Text(
+                "Target Reps: " + exercise.reps.toString(),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              ),
+            ),
+          )),
           Row(
             children: [
               Expanded(
@@ -141,7 +150,11 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
                 }
               },
               child: Text("Complete Set")),
-          Text(numCompletedSets.toString() + "/" + exercise.sets.toString()),
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+            child: Text(
+                numCompletedSets.toString() + "/" + exercise.sets.toString()),
+          ),
           Expanded(child: setList()),
         ],
       ),
@@ -158,7 +171,8 @@ class _ExerciseExecutionState extends State<ExerciseExecution> {
             borderRadius: BorderRadius.circular(10.0),
           ),
           child: ListTile(
-            title: Text("Set " + (position + 1).toString()),
+            title: Text("Set " + (position + 1).toString(),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
             subtitle: Text("Reps: " +
                 executedSets[position].reps.toString() +
                 "   Weight: " +

@@ -8,8 +8,6 @@ class Exercise implements WorkoutItem {
   int _sets;
   int _orderNum;
 
-  List<ExecutedSet> executedSets;
-
   Exercise(this._name, this._reps, this._sets, this._orderNum);
 
   Exercise.withId(this._id, this._name, this._reps, this._sets, this._orderNum);
@@ -53,6 +51,7 @@ class Exercise implements WorkoutItem {
 
 class StandAloneExercise extends Exercise {
   int _workoutId;
+  List<ExecutedStandAloneExerciseSet> executedSets;
 
   StandAloneExercise(name, reps, sets, orderNum)
       : super(name, reps, sets, orderNum);

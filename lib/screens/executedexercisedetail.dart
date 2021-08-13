@@ -5,7 +5,7 @@ import 'package:workout_tracking_app/model/executedset.dart';
 import 'package:workout_tracking_app/styles/styles.dart';
 
 class ExecutedExerciseDetail extends StatefulWidget {
-  Exercise exercise;
+  StandAloneExercise exercise;
 
   ExecutedExerciseDetail(this.exercise);
 
@@ -15,7 +15,7 @@ class ExecutedExerciseDetail extends StatefulWidget {
 }
 
 class _ExecutedExerciseDetailState extends State<ExecutedExerciseDetail> {
-  Exercise exercise;
+  StandAloneExercise exercise;
 
   _ExecutedExerciseDetailState(this.exercise);
 
@@ -36,14 +36,14 @@ class _ExecutedExerciseDetailState extends State<ExecutedExerciseDetail> {
             side: BorderSide(color: myIndigo, width: 2.0),
             borderRadius: BorderRadius.circular(10.0),
           ),
-          // child: ListTile(
-          //   title: Text("Set " + (position + 1).toString()),
-          //   subtitle: Text("Reps: " +
-          //       exercise.executedSets[position].reps.toString() +
-          //       "   Weight: " +
-          //       exercise.executedSets[position].weight.toString() +
-          //       " lbs"),
-          // ),
+          child: ListTile(
+            title: Text("Set " + (position + 1).toString()),
+            subtitle: Text("Reps: " +
+                exercise.executedSets[position].reps.toString() +
+                "   Weight: " +
+                exercise.executedSets[position].weight.toString() +
+                " lbs"),
+          ),
         );
       },
     );

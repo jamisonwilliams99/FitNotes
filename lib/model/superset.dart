@@ -1,3 +1,4 @@
+import 'package:workout_tracking_app/model/executedset.dart';
 import 'workoutitem.dart';
 
 class SuperSet implements WorkoutItem {
@@ -5,6 +6,8 @@ class SuperSet implements WorkoutItem {
   int _sets;
   int _workoutId;
   int _orderNum;
+
+  List<ExecutedSuperSet> executedSets;
 
   SuperSet.withWorkoutId(this._workoutId, this._orderNum);
 

@@ -2,14 +2,9 @@ Current testing branch:
 adding_supersets
 
 CURRENTLY WORKING ON:
-
-add a listview to display the executed super set data
-
-- add functionality to record the superset exercises in superSetExecution
-- - will need to modify ExecutedSet to accept SuperSets
-- - I just finished modifying the inheritance hierchy of ExecutedSet
-- - Now I need to modify the Workout/Exercise Execution screens to accept the different objects correctly
-- - first need to modify database methods to accept the different objects
+Modify exercise execution detail screen to generically accept workoutitem
+implement supersetexecution detail screen
+fix issues that liv addressed
 
 Current issue:
 
@@ -51,7 +46,6 @@ Needs fixed:
   items are added and removed from lists
 
 - when changing the order of exercises in WorkoutView, the animation causes the setsxreps subtitle in the card to shift down
-- - also, there is a weird border placed around the card
 
 - don't allow users to have duplicate workout names
 
@@ -77,6 +71,11 @@ OPTIMIZATION:
 - may need to get rid of getSets() in executedworkoutdetail.dart and just add a getData() method to executedexercisedetail.dart
 - - not sure which is more optimal
 
+
+NOTES From Liv:
+- add a save superset button on superset creation screen
+- add superset should clear out the previously added exercise fields after the exercise is added to the superset
+- reps and sets should not have a zero populated to it because it is annoying to erase
 
 
 

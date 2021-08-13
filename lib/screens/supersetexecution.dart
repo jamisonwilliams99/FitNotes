@@ -77,7 +77,7 @@ class _SuperSetExecutionState extends State<SuperSetExecution> {
     }
     return Scaffold(
         appBar: AppBar(
-          title: Text("Super Set"),
+          title: Text("Superset"),
           actions: [
             Padding(
               padding: const EdgeInsets.all(12.0),
@@ -97,7 +97,6 @@ class _SuperSetExecutionState extends State<SuperSetExecution> {
         ),
         body: Column(
           children: [
-            // need some sort of method here for dynamically displaying exercises
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: Row(
@@ -105,6 +104,11 @@ class _SuperSetExecutionState extends State<SuperSetExecution> {
                 children: generateExerciseWidgets(),
               ),
             ),
+            Center(
+                child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: generateTargetRepsLabel(),
+            )),
             Row(
               children: [
                 Expanded(
@@ -140,14 +144,24 @@ class _SuperSetExecutionState extends State<SuperSetExecution> {
               ],
             ),
             ElevatedButton(
-                // make this a function (should be called in the completeSetWrapper() function)
                 onPressed: () {
                   completeSetWrapper();
                 },
                 child: Text("Complete Set")),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+              child: Text(
+                  numCompletedSets.toString() + "/" + superSet.sets.toString()),
+            ),
             Expanded(child: superSetList())
           ],
         ));
+  }
+
+  Widget generateTargetRepsLabel() {
+    SuperSetExercise exercise = exercises[indexOfCurrentExercise];
+    return Text("Target Reps: " + exercise.reps.toString(),
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15));
   }
 
   ListView superSetList() {
@@ -162,7 +176,12 @@ class _SuperSetExecutionState extends State<SuperSetExecution> {
             ),
             child: Column(
               children: [
-                Center(child: Text("Set " + (position + 1).toString())),
+                Padding(
+                  padding: const EdgeInsets.only(top: 12.0),
+                  child: Text("Set " + (position + 1).toString(),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                ),
                 exerciseSetList(superSetId),
               ],
             ),
@@ -170,12 +189,9 @@ class _SuperSetExecutionState extends State<SuperSetExecution> {
         });
   }
 
-  // implement this the same way as superSetCard in exerciseexecution
   ListView exerciseSetList(int superSetId) {
     List<ExecutedSuperSetExerciseSet> exerciseSets =
         executedSuperSetExerciseSets[superSetId];
-    // print(executedSuperSetExerciseSets);
-    // print(executedSuperSets);
     return ListView.builder(
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
